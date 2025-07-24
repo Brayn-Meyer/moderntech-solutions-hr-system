@@ -1,4 +1,4 @@
-import PerformanceReview from '../models/performanceReviewDB.js'
+import PerformanceReview from '../model/performanceReviewDB.js'
 
 exports.getAllReviews = async (req, res) => {
   try {

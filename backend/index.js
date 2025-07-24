@@ -20,7 +20,7 @@ import {
     createReview,
     updateReview,
     deleteReview
-} from '../controllers/performanceReviewCon.js';
+} from '../backend/controller/performanceReviewCon.js';
 
 config()
 
@@ -42,11 +42,11 @@ app.patch('/edit_leave_request', editLeaveRequestCon)
 app.delete("/employees/:id", removeEmployeeCon)
 app.delete("/leaverequest/:id", removeLeaveRequestCon)
 
-app.get('/', getAllReviews);
-app.get('/:id', getReviewById);
-app.post('/', createReview);
-app.put('/:id', updateReview);
-app.delete('/:id', deleteReview);
+app.get('/performancereview', getAllReviews);
+app.get('/performancereview/:id', getReviewById);
+app.post('/performancereview', createReview);
+app.put('/performancereview/:id', updateReview);
+app.delete('/performancereview/:id', deleteReview);
 
 // lets app be accessed from line/hosting
 app.listen(PORT, () => {
