@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div class="wrapper">
+  <form action="" method="t">
+  <div class="imgcontainer">
+    <img src="logo.PNG" alt="logo" class="logo">
+    <h1>Welcome To ModernTech Solutions</h1>
+  </div>
+
+  <div class="container">
+    <label for="uname"><b>Username:</b></label>
+    <input type="text" placeholder="Enter Username" name="uname" required>
+
+    <label for="psw"><b>Password:</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required>
+
+    <button type="submit">Login</button><br>
+    <label>
+      <input type="checkbox" checked="checked" name="remember"> Remember me
+    </label>
+  </div>
+
+  <div class="container bottom-container">
+    <button type="button" class="cancelbtn">Cancel</button>
+    <span class="psw">Forgot <a href="#">password?</a></span>
+  </div>
+</form> 
+</div>
+
+<style>
+body{
+background-image: url(https://img.freepik.com/premium-vector/modern-blue-dynamic-wave-pattern-background-design_768131-258.jpg?w=740);
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center;
+font-family: Arial, Helvetica, sans-serif;
+    }
+
+.wrapper{
+    width: 400px;
+    margin: 50px auto;
+    background-image: url(https://img.freepik.com/premium-vector/modern-blue-dynamic-wave-pattern-background-design_768131-258.jpg?w=740);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 16px 16px 16px rgba(8, 8, 8, 0.2);
+    overflow: hidden;
+}
+form {
+  border: none;
+}
+
+
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #123381;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+
+button {
+  background-color: #ff2200;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 50%;
+}
+
+
+button:hover {
+  opacity: 0.8;
+}
+
+
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #ff2200;
+}
+
+.imgcontainer {
+  text-align: center;
+  padding: px;
+}
+
+
+.logo {
+  width: 250px;
+  height: auto;
+}
+
+
+.container {
+  padding: 16px;
+}
+
+h1{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #05060d;
+}
+
+.bottom-container{
+    background-color: #0a0d24;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+}
+
+input[type="checkbox"]{
+    accent-color: green;
+}
+
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+  color: white;
+}
+
+
+@media screen and (max-width: 300px) {
+    span.psw {
+    display: block;
+    float: none;
+  }
+  .cancelbtn {
+    width: 100%;
+  }
+}
+</style>
+</body>
+</html>
