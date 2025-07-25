@@ -89,13 +89,7 @@ export default {
                     throw new Error("Please fill in all required fields");
                 }
                 // Send data to backend
-                const response = await axios.post('http://localhost:3315/add_employees', this.newEmployee);
-                
-                // Update Vuex store with the new employee
-                this.$store.commit("add_to_employee_info", response.data);
-                
-                // Show success message
-                this.successMessage = "Employee added successfully!";
+                this.$store.dispatch("add_employee", this.newEmployee)
                 
                 // Reset form
                 this.resetForm();

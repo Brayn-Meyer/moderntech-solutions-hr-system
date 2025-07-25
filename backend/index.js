@@ -2,25 +2,15 @@ import express from 'express'
 import { config } from 'dotenv'
 import cors from 'cors'
 
-import { getEmployeeCon } from './controller/employeeCon.js'
-import { removeEmployeeCon } from './controller/removeEmployeeCon.js'
+import { getEmployeeCon, addEmployeeCon, removeEmployeeCon } from './controller/employeeCon.js'
 
 import { getPayrollCon } from './controller/payrollCon.js'
+
 import { getAttendanceCon } from './controller/attendanceCon.js'
-import { getLeaveRequestCon } from './controller/leaveRequestCon.js'
 
-import { addEmployeeCon } from './controller/addEmployeeCon.js'
+import { getLeaveRequestCon, addLeaveRequestCon, editLeaveRequestCon, removeLeaveRequestCon } from './controller/leaveRequestCon.js'
 
-import { editLeaveRequestCon } from './controller/editLeaveRequestCon.js'
-import { removeLeaveRequestCon } from './controller/removeLeaveRequestCon.js'
-
-import {
-    getAllReviews,
-    getReviewById,
-    createReview,
-    updateReview,
-    deleteReview
-} from '../backend/controller/performanceReviewCon.js';
+import { getPerformanceReviewsCon, getSinglePerformanceReviewsCon, addPerformanceReviewsCon, editPerformanceReviewsCon, removePerformanceReviewsCon } from '../backend/controller/performanceReviewCon.js';
 
 config()
 
@@ -31,22 +21,23 @@ app.use(express.json())
 app.use(cors())
 
 app.get("/employees", getEmployeeCon)
-app.get("/payrolls", getPayrollCon)
-app.get("/attendance", getAttendanceCon)
-app.get("/leaverequest", getLeaveRequestCon)
-
-app.post('/add_employees', addEmployeeCon);
-
-app.patch('/edit_leave_request', editLeaveRequestCon)
-
+app.post('/employees', addEmployeeCon);
 app.delete("/employees/:id", removeEmployeeCon)
-app.delete("/leaverequest/:id", removeLeaveRequestCon)
 
-app.get('/performancereview', getAllReviews);
-app.get('/performancereview/:id', getReviewById);
-app.post('/performancereview', createReview);
-app.put('/performancereview/:id', updateReview);
-app.delete('/performancereview/:id', deleteReview);
+app.get("/payrolls", getPayrollCon)
+
+app.get("/attendance", getAttendanceCon)
+
+app.get("/leaverequest", getLeaveRequestCon)
+app.post("/leaverequest", addLeaveRequestCon)
+app.delete("/leaverequest/:id", removeLeaveRequestCon)
+app.patch('/leaverequest', editLeaveRequestCon)
+
+app.get('/performancereview', getPerformanceReviewsCon);
+app.get('/performancereview/:id', getSinglePerformanceReviewsCon);
+app.post('/performancereview', addPerformanceReviewsCon);
+app.patch('/performancereview/:id', editPerformanceReviewsCon);
+app.delete('/performancereview/:id', removePerformanceReviewsCon);
 
 // lets app be accessed from line/hosting
 app.listen(PORT, () => {

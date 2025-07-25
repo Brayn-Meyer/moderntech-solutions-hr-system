@@ -1,8 +1,8 @@
-import PerformanceReview from '../model/performanceReviewDB.js'
+import { getPerformanceReviews, getSinglePerformanceReviews, addPerformanceReviews, editPerformanceReviews, removePerformanceReviews } from '../model/performanceReviewDB.js'
 
-exports.getAllReviews = async (req, res) => {
+export const getPerformanceReviewsCon = async (req, res) => {
   try {
-    const reviews = await PerformanceReview.getAll();
+    const reviews = await getAll();
     res.json(reviews);
   } catch (error) {
     console.error(error);
@@ -10,9 +10,9 @@ exports.getAllReviews = async (req, res) => {
   }
 };
 
-exports.getReviewById = async (req, res) => {
+export const getSinglePerformanceReviewsCon = async (req, res) => {
   try {
-    const review = await PerformanceReview.getById(req.params.id);
+    const review = await getById(req.params.id);
     if (!review) {
       return res.status(404).json({ error: 'Review not found' });
     }
@@ -23,9 +23,9 @@ exports.getReviewById = async (req, res) => {
   }
 };
 
-exports.createReview = async (req, res) => {
+export const addPerformanceReviewsCon = async (req, res) => {
   try {
-    const newReview = await PerformanceReview.create(req.body);
+    const newReview = await create(req.body);
     res.status(201).json(newReview);
   } catch (error) {
     console.error(error);
@@ -33,9 +33,9 @@ exports.createReview = async (req, res) => {
   }
 };
 
-exports.updateReview = async (req, res) => {
+export const editPerformanceReviewsCon = async (req, res) => {
   try {
-    const updatedReview = await PerformanceReview.update(req.params.id, req.body);
+    const updatedReview = await update(req.params.id, req.body);
     res.json(updatedReview);
   } catch (error) {
     console.error(error);
@@ -43,9 +43,9 @@ exports.updateReview = async (req, res) => {
   }
 };
 
-exports.deleteReview = async (req, res) => {
+export const removePerformanceReviewsCon = async (req, res) => {
   try {
-    await PerformanceReview.delete(req.params.id);
+    await deleteReviewDB(req.params.id);
     res.status(204).end();
   } catch (error) {
     console.error(error);

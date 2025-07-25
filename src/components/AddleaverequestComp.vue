@@ -45,8 +45,22 @@
               <label for="leaveDate">Leave Date</label>
               <input
                 id="leaveDate"
-                v-model="newRequest.leaveRequests[0].date"
+                v-model="newRequest.date"
                 type="date"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="leaveDepartment">Department</label>
+              <input
+                id="leaveDepartment"
+                v-model="newRequest.department"
+                type="text"
+                placeholder="Enter department"
                 required
                 class="form-input"
               />
@@ -57,7 +71,7 @@
             <label for="leaveReason">Reason for Leave</label>
             <textarea
               id="leaveReason"
-              v-model="newRequest.leaveRequests[0].reason"
+              v-model="newRequest.reason"
               placeholder="Briefly explain the reason for leave"
               required
               class="form-textarea"
@@ -83,13 +97,10 @@ export default {
       searchQuery: "",
       newRequest: {
         name: "",
-        leaveRequests: [
-          {
-            date: "",
-            reason: "",
-            status: "Pending"
-          }
-        ]
+        department: "",
+        date: "",
+        reason: "",
+        status: "Pending"
       }
     };
   },
@@ -97,7 +108,7 @@ export default {
     submitLeaveRequest() {
       if (!this.validateForm()) return;
 
-      this.$store.commit("add_to_attendance", { ...this.newRequest });
+      this.$store.dispatch("add_leave_request", this.newRequest);
       this.resetForm();
       this.showSuccessNotification();
       this.showForm = false;
@@ -107,11 +118,15 @@ export default {
         this.showError("Please enter employee name");
         return false;
       }
-      if (!this.newRequest.leaveRequests[0].date) {
+      if (!this.newRequest.date) {
         this.showError("Please select a leave date");
         return false;
       }
-      if (!this.newRequest.leaveRequests[0].reason.trim()) {
+      if (!this.newRequest.department.trim()) {
+        this.showError("Please provide a department");
+        return false;
+      }
+      if (!this.newRequest.reason.trim()) {
         this.showError("Please provide a reason for leave");
         return false;
       }

@@ -147,11 +147,20 @@
         </div>
       </div>
     </div>
+
+    <div v-if="selectedEmployee">
+      <div class="employee-details">
+        <p><strong>Name:</strong> {{ selectedEmployee.name }}</p>
+        <p><strong>Department:</strong> {{ selectedEmployee.department }}</p>
+        <!-- Add more fields as needed -->
+      </div>
+    </div>
   </div>
   <footer-comp />
 </template>
 
 <script>
+import axios from 'axios';
 import { ref, computed, onMounted, watch } from 'vue';
 import NavbarComp from '@/components/NavbarComp.vue';
 import FooterComp from '@/components/FooterComp.vue';
@@ -168,71 +177,16 @@ export default {
     // Build employees array from Vuex store
     const employees = computed(() =>
       store.state.employee_info.map(emp => ({
-        id: emp.employeeId,
+        id: emp.id || emp.employeeId, // support both
         name: emp.name,
         department: emp.department
       }))
     );
 
-    // Helper functions
-    const getRandomDate = () => {
-      const start = new Date(2025, 7, 1).getTime();
-      const end = new Date().getTime();
-      const date = new Date(start + Math.random() * (end - start));
-      return date.toISOString().split('T')[0];
-    };
-
-    const getRandomRating = () => Math.floor(Math.random() * 5) + 1;
-
-    const getStrengths = (rating) => {
-      if (rating >= 4) return "Consistently exceeds expectations and demonstrates strong leadership.";
-      if (rating === 3) return "Meets expectations and works well with the team.";
-      return "Needs improvement in key performance areas.";
-    };
-
-    const getAreasForImprovement = (rating) => {
-      if (rating >= 4) return "Continue current performance and mentor others.";
-      if (rating === 3) return "Could take more initiative and seek feedback.";
-      return "Should focus on time management and skill development.";
-    };
-
-    const getGoals = (rating) => {
-      if (rating >= 4) return "Take on more challenging projects and lead initiatives.";
-      if (rating === 3) return "Improve consistency and expand technical skills.";
-      return "Attend training sessions and set short-term improvement goals.";
-    };
-
-    const getRandomStatus = () => {
-      const statuses = ['Draft', 'Completed', 'Archived'];
-      return statuses[Math.floor(Math.random() * statuses.length)];
-    };
-
-    // Declare reviews BEFORE using it in onMounted/watch
-    const reviews = ref(
-      store.state.employee_info.map(emp => {
-        const rating = getRandomRating();
-        return {
-          id: emp.employeeId,
-          employeeId: emp.employeeId,
-          employeeName: emp.name,
-          department: emp.department,
-          reviewDate: getRandomDate(),
-          rating,
-          strengths: getStrengths(rating),
-          areasForImprovement: getAreasForImprovement(rating),
-          goals: getGoals(rating),
-          status: getRandomStatus()
-        };
-      })
-    );
-
-    
-    onMounted(() => {
-      store.commit('set_performance_reviews', reviews.value);
-    });
-    watch(reviews, (newVal) => {
-      store.commit('set_performance_reviews', newVal);
-    }, { deep: true });
+    // State
+    const reviews = ref([]);
+    const loading = ref(false);
+    const error = ref('');
 
     // Form and UI state
     const searchQuery = ref('');
@@ -252,6 +206,73 @@ export default {
       areasForImprovement: '',
       goals: '',
       status: 'Draft'
+    });
+
+    // API base URL
+    const API_URL = 'http://localhost:3315/performancereview';
+
+    // Fetch all reviews
+    async function fetchReviews() {
+      loading.value = true;
+      error.value = '';
+      try {
+        const res = await axios.get(API_URL);
+        reviews.value = res.data;
+      } catch (err) {
+        error.value = 'Failed to load reviews';
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    // Create a review
+    async function createReview(reviewData) {
+      loading.value = true;
+      error.value = '';
+      try {
+        const res = await axios.post(API_URL, reviewData);
+        reviews.value.push(res.data);
+      } catch (err) {
+        error.value = 'Failed to create review';
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    // Update a review
+    async function updateReview(id, reviewData) {
+      loading.value = true;
+      error.value = '';
+      try {
+        const res = await axios.put(`${API_URL}/${id}`, reviewData);
+        const idx = reviews.value.findIndex(r => r.id === id);
+        if (idx !== -1) reviews.value[idx] = res.data;
+      } catch (err) {
+        error.value = 'Failed to update review';
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    // Delete a review
+    async function deleteReview(id) {
+      loading.value = true;
+      error.value = '';
+      try {
+        await axios.delete(`${API_URL}/${id}`);
+        reviews.value = reviews.value.filter(r => r.id !== id);
+      } catch (err) {
+        error.value = 'Failed to delete review';
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    onMounted(async () => {
+      if (!store.state.employee_info || store.state.employee_info.length === 0) {
+        await store.dispatch('fetch_employee_info');
+      }
+      await fetchReviews();
     });
 
     // Computed properties
@@ -338,30 +359,27 @@ export default {
       editingReview.value = null;
     };
 
-    const submitReview = () => {
+    const submitReview = async () => {
       const employee = employees.value.find(emp => emp.id === parseInt(form.value.employeeId));
+      if (!employee) return;
 
       if (editingReview.value) {
-        // Update existing review
-        const index = reviews.value.findIndex(r => r.id === editingReview.value.id);
-        reviews.value[index] = {
-          ...reviews.value[index],
+        // Update
+        await updateReview(editingReview.value.id, {
           ...form.value,
           employeeName: employee.name,
           department: employee.department
-        };
+        });
       } else {
-        // Add new review
-        const newReview = {
-          id: Math.max(...reviews.value.map(r => r.id)) + 1,
+        // Create
+        await createReview({
           ...form.value,
           employeeName: employee.name,
           department: employee.department
-        };
-        reviews.value.push(newReview);
+        });
       }
-
       closeModal();
+      await fetchReviews(); // Refresh list
     };
 
     const confirmDelete = (id) => {
@@ -369,15 +387,15 @@ export default {
       showDeleteModal.value = true;
     };
 
-    const deleteReview = () => {
-      reviews.value = reviews.value.filter(review => review.id !== reviewToDelete.value);
-      showDeleteModal.value = false;
-      reviewToDelete.value = null;
-    };
+    const selectedEmployee = computed(() =>
+      employees.value.find(emp => emp.id === Number(form.value.employeeId))
+    );
 
     return {
       employees,
       reviews,
+      loading,
+      error,
       searchQuery,
       selectedDepartment,
       departments,
@@ -392,7 +410,8 @@ export default {
       closeModal,
       submitReview,
       confirmDelete,
-      deleteReview
+      deleteReview,
+      selectedEmployee
     };
   }
 };
@@ -401,13 +420,15 @@ export default {
 <style scoped>
 .performance-review-container {
   max-width: 1200px;
-  margin: 30px auto; /* Center horizontally */
+  margin: 30px auto;
+  /* Center horizontally */
   padding: 30px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5efeb;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center children horizontally */
+  align-items: center;
+  /* Center children horizontally */
 }
 
 h1 {
@@ -420,7 +441,8 @@ h1 {
 
 .controls {
   display: flex;
-  justify-content: center; /* Center controls */
+  justify-content: center;
+  /* Center controls */
   align-items: center;
   margin-bottom: 20px;
   width: 100%;
@@ -432,7 +454,8 @@ h1 {
   gap: 15px;
 }
 
-.search-input, .department-select {
+.search-input,
+.department-select {
   padding: 8px 12px;
   border: 1px solid #c8d9e6;
   border-radius: 4px;
@@ -469,7 +492,8 @@ h1 {
   box-shadow: 0 2px 10px rgba(47, 65, 86, 0.1);
   overflow: hidden;
   border: 1px solid #e0e8ee;
-  margin: 0 auto; /* Center table */
+  margin: 0 auto;
+  /* Center table */
   width: 100%;
   display: flex;
   justify-content: center;
@@ -485,7 +509,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #e0e8ee;
@@ -500,14 +525,15 @@ th {
 }
 
 th:hover {
-background-color: #567c8d;
+  background-color: #567c8d;
 }
 
 tr:hover {
   background-color: #f8fafc;
 }
 
-.rating-display, .rating-input {
+.rating-display,
+.rating-input {
   display: flex;
   gap: 2px;
 }
@@ -554,11 +580,11 @@ tr:hover {
   margin-right: 8px;
   transition: all 0.2s;
   font-weight: 500;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .edit-btn {
- background-color: #0b2545;
+  background-color: #0b2545;
   color: white;
 }
 
@@ -589,7 +615,8 @@ tr:hover {
   backdrop-filter: blur(2px);
 }
 
-.review-modal, .confirmation-modal {
+.review-modal,
+.confirmation-modal {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 25px rgba(47, 65, 86, 0.2);
@@ -648,7 +675,8 @@ tr:hover {
   color: #2f4156;
 }
 
-.form-input, .form-textarea {
+.form-input,
+.form-textarea {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #d6e4f0;
@@ -659,7 +687,8 @@ tr:hover {
   transition: border-color 0.2s;
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-input:focus,
+.form-textarea:focus {
   outline: none;
   border-color: #567c8d;
   box-shadow: 0 0 0 2px rgba(86, 124, 141, 0.1);
@@ -670,7 +699,8 @@ tr:hover {
   resize: vertical;
 }
 
-.form-actions, .modal-actions {
+.form-actions,
+.modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -680,7 +710,7 @@ tr:hover {
 }
 
 .cancel-btn {
- background-color: #0b2545;
+  background-color: #0b2545;
   color: #ffffff;
   border: 1px solid #d6e4f0;
   padding: 10px 18px;
@@ -696,7 +726,7 @@ tr:hover {
 }
 
 .submit-btn {
- background-color: #0b2545;
+  background-color: #0b2545;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -742,42 +772,47 @@ tr:hover {
     gap: 15px;
     align-items: stretch;
   }
-  
+
   .search-filter {
     flex-direction: column;
     gap: 10px;
   }
-  
-  .search-input, .department-select, .add-review-btn {
+
+  .search-input,
+  .department-select,
+  .add-review-btn {
     width: 100%;
   }
-  
-  th, td {
+
+  th,
+  td {
     padding: 10px;
     font-size: 14px;
   }
-  
+
   .action-btn {
     display: block;
     width: 100%;
     margin-bottom: 8px;
   }
-  
+
   .review-modal {
     width: 95%;
     max-height: 85vh;
   }
-  
+
   .modal-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .form-actions {
     flex-direction: column;
     gap: 10px;
   }
-  
-  .cancel-btn, .submit-btn, .delete-btn {
+
+  .cancel-btn,
+  .submit-btn,
+  .delete-btn {
     width: 100%;
   }
 }
@@ -787,6 +822,7 @@ tr:hover {
     overflow-x: auto;
     width: 100%;
   }
+
   .reviews-table table {
     min-width: 600px;
   }

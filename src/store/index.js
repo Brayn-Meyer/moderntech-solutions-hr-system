@@ -81,15 +81,30 @@ export default createStore({
             console.log(data.data.leave_request)
         },
 
-        async remove_employee({commit}, employeeID) {
-            let data = await axios.delete(`http://localhost:3315/employees/${employeeID}`)
-            this.$store.dispatch("fetch_employee_info")
-            console.log(data.data.employees)
+        async add_employee({commit}, employee) {
+            const data = await axios.post('http://localhost:3315/employees', employee)
+            this.dispatch("fetch_employee_info")
+        },
+        async add_leave_request({commit}, leave_request) {
+            const data = await axios.post('http://localhost:3315/leaverequest', leave_request)
+            this.dispatch("fetch_leave_request_info")
+        },
+
+        async edit_leave_request({commit}, id, newStatus) {
+            await axios.patch('http://localhost:3315/leaverequest', {id:id, status:newStatus })
+            this.dispatch("fetch_leave_request_info")
+            // console.log(data.data.leave_request)
+        },
+
+        async remove_employee({commit}, id) {
+            await axios.delete(`http://localhost:3315/employees/${id}`)
+            this.dispatch("fetch_employee_info")
+            // console.log(data.data.employees)
         },
         async remove_leave_request({commit}, id) {
-            let data = await axios.delete(`http://localhost:3315/leaverequest/${id}`)
-            this.$store.dispatch("fetch_leave_request_info")
-            console.log(data.data.employees)
+            await axios.delete(`http://localhost:3315/leaverequest/${id}`)
+            this.dispatch("fetch_leave_request_info")
+            // console.log(data.data.employees)
         }
     },
     modules: {

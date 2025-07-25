@@ -13,11 +13,11 @@
         <span class="badge">{{ info.reason }}</span>
         <span class="badge">{{ info.status }}</span>
         <span v-if="this.info.status == 'Pending'">
-          <button @click="editLeaveRequest('Approve')">Approve</button>
-          <button @click="editLeaveRequest('Denied')">Deny</button>
+          <button @click="editLeaveRequest(info.id, 'Approve')" class="approve-btn">Approve</button>
+          <button @click="editLeaveRequest(info.id, 'Denied')" class="deny-btn">Deny</button>
         </span>
         <span>
-          <button @click="removeRequest()">Remove</button>
+          <button @click="removeRequest(info.id)" class="remove-btn">Remove</button>
         </span>
       </div>
     </div>
@@ -38,25 +38,32 @@ export default {
       const options = { day: 'numeric', month: 'long', year: 'numeric' };
       return new Date(dateStr).toLocaleDateString('en-GB', options);
     },
-    async editLeaveRequest(newStatus){
-      await axios.patch('http://localhost:3315/edit_leave_request', {id:this.info.id, status:newStatus });
-      this.$store.dispatch("fetch_leave_request_info"); // <-- Add this line
+    async editLeaveRequest(id, newStatus) {
+      await axios.patch(`http://localhost:3315/leaverequest`, { id: id, status: newStatus })
+      this.$store.dispatch('fetch_employee_info')
+
+      let data = await axios.get('http://localhost:3315/leaverequest')
+      this.$store.commit('get_leave_request', data.data.leave_request)
     },
-    removeRequest(){
-      this.$store.dispatch("remove_leave_request", this.info.id);
+    async removeRequest(id) {
+      await axios.delete(`http://localhost:3315/leaverequest/${id}`)
+      this.$store.dispatch('fetch_employee_info')
+
+      let data = await axios.get('http://localhost:3315/leaverequest')
+      this.$store.commit('get_leave_request', data.data.leave_request)
     }
   }
 };
 </script>
 <style scoped>
 .compact-leave-card {
-  background: #ffffff;
+  background: #FFFFFF;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(47, 65, 86, 0.1);
   margin-bottom: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
-  border: 1px solid #e0e8ee;
+  border: 1px solid #E0E8EE;
 }
 
 /* Header Section */
@@ -66,13 +73,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  background: linear-gradient(to right, #f5efeb, #ffffff);
-  border-bottom: 1px solid #d6e4f0;
+  background: linear-gradient(to right, #F5EFEB, #FFFFFF);
+  border-bottom: 1px solid #D6E4F0;
   transition: all 0.2s ease;
 }
 
 .card-header:hover {
-  background: linear-gradient(to right, #ede6e2, #f5efeb);
+  background: linear-gradient(to right, #EDE6E2, #F5EFEB);
 }
 
 .employee-info {
@@ -85,7 +92,7 @@ export default {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #567c8d, #2f4156);
+  background: linear-gradient(135deg, #567C8D, #2F4156);
   color: white;
   display: flex;
   align-items: center;
@@ -98,13 +105,13 @@ export default {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: #2f4156;
+  color: #2F4156;
 }
 
 .employee-info p {
   margin: 3px 0 0;
   font-size: 12px;
-  color: #7a8fa1;
+  color: #7A8FA1;
 }
 
 .status-summary {
@@ -122,23 +129,23 @@ export default {
 }
 
 .badge.pending {
-  background: linear-gradient(135deg, #fff3bf, #ffe69e);
-  color: #b35900;
+  background: linear-gradient(135deg, #FFF3BF, #FFE69E);
+  color: #B35900;
 }
 
 .badge.approved {
-  background: linear-gradient(135deg, #d3f9d8, #b2f2bb);
-  color: #1a5e2b;
+  background: linear-gradient(135deg, #D3F9D8, #B2F2BB);
+  color: #1A5E2B;
 }
 
 .badge.denied {
-  background: linear-gradient(135deg, #ffd3d3, #ffb8b8);
-  color: #991b1b;
+  background: linear-gradient(135deg, #FFD3D3, #FFB8B8);
+  color: #991B1B;
 }
 
 .toggle-icon {
   font-size: 13px;
-  color: #567c8d;
+  color: #567C8D;
   margin-left: 8px;
   transition: transform 0.2s;
 }
@@ -146,19 +153,19 @@ export default {
 /* Expanded Content */
 .card-body {
   padding: 8px 16px;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 }
 
 .request-item {
   display: flex;
   gap: 14px;
   padding: 14px 0;
-  border-bottom: 1px solid #f0f5f9;
+  border-bottom: 1px solid #F0F5F9;
   transition: background-color 0.2s;
 }
 
 .request-item:hover {
-  background-color: #f8fafc;
+  background-color: #F8FAFC;
 }
 
 .request-item:last-child {
@@ -171,20 +178,20 @@ export default {
   align-items: center;
   min-width: 42px;
   padding: 4px;
-  background-color: #f5f9fc;
+  background-color: #F5F9FC;
   border-radius: 6px;
 }
 
 .request-date .day {
   font-size: 16px;
   font-weight: 600;
-  color: #2f4156;
+  color: #2F4156;
 }
 
 .request-date .month {
   font-size: 10px;
   text-transform: uppercase;
-  color: #7a8fa1;
+  color: #7A8FA1;
   letter-spacing: 0.5px;
   margin-top: 2px;
 }
@@ -196,7 +203,7 @@ export default {
 .request-details .reason {
   margin: 0;
   font-size: 13px;
-  color: #3a4d61;
+  color: #3A4D61;
   line-height: 1.5;
 }
 
@@ -216,18 +223,18 @@ export default {
 }
 
 .status.pending {
-  background: linear-gradient(135deg, #fff3bf, #ffe69e);
-  color: #b35900;
+  background: linear-gradient(135deg, #FFF3BF, #FFE69E);
+  color: #B35900;
 }
 
 .status.approved {
-  background: linear-gradient(135deg, #d3f9d8, #b2f2bb);
-  color: #1a5e2b;
+  background: linear-gradient(135deg, #D3F9D8, #B2F2BB);
+  color: #1A5E2B;
 }
 
 .status.denied {
-  background: linear-gradient(135deg, #ffd3d3, #ffb8b8);
-  color: #991b1b;
+  background: linear-gradient(135deg, #FFD3D3, #FFB8B8);
+  color: #991B1B;
 }
 
 .actions {
@@ -253,28 +260,73 @@ export default {
 }
 
 .btn-approve {
-  background: linear-gradient(135deg, #10b981, #0d9e6e);
+  background: linear-gradient(135deg, #10B981, #0D9E6E);
   color: white;
 }
 
 .btn-approve:hover {
-  background: linear-gradient(135deg, #0d9e6e, #10b981);
+  background: linear-gradient(135deg, #0D9E6E, #10B981);
   transform: translateY(-1px);
 }
 
 .btn-deny {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #EF4444, #DC2626);
   color: white;
 }
 
 .btn-deny:hover {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
+  background: linear-gradient(135deg, #DC2626, #EF4444);
   transform: translateY(-1px);
 }
 
 /* Animation for expanding */
 .card-body {
   animation: fadeIn 0.3s ease-out;
+}
+
+.approve-btn {
+  background-color: #20AC43;
+  border: none;
+  border-radius: 2px;
+  height: 30px;
+  width: 70px;
+  color: white;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.approve-btn:hover {
+  background-color: #20bd47;
+}
+
+.deny-btn {
+  background-color: #D41717;
+  border: none;
+  border-radius: 2px;
+  height: 30px;
+  width: 70px;
+  color: white;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.deny-btn:hover {
+  background-color: #e81414;
+}
+
+.remove-btn {
+  background-color: #2f4156;
+  border: none;
+  border-radius: 2px;
+  height: 30px;
+  width: 70px;
+  color: white;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: #3a4d61
 }
 
 @keyframes fadeIn {
