@@ -17,7 +17,7 @@ const routes = [
   },
   {
     path: '/dashboard',
-    name: 'home',
+    name: 'dashboard',
     component: HomeView
   },
   {

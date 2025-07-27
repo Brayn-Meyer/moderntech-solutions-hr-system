@@ -5,7 +5,7 @@
             
         </div>
         <div class="nav-links">
-            <router-link to="/home" class="nav-link">Dashboard</router-link>
+            <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
             <router-link to="/employee" class="nav-link">Employees</router-link>
             <router-link to="/payroll" class="nav-link">Payroll</router-link>
             <router-link to="/attendance" class="nav-link">Attendance</router-link>

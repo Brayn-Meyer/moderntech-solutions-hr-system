@@ -9,9 +9,9 @@
         />
         <addleaverequest-comp />
     </div>
-    <span>Pending Request : {{ pendingCount }} | </span>
-    <span>Approved Request : {{ approvedCount }} | </span>
-    <span>Denied Request : {{ deniedCount }}</span>
+    <span>Pending Request : {{ $store.getters.pendingLeaveRequests }} | </span>
+    <span>Approved Request : {{ $store.getters.approvedLeaveRequests }} | </span>
+    <span>Denied Request : {{ $store.getters.deniedLeaveRequests }}</span>
     <leaverequest-comp v-for="leave_request in filteredLeaveRequest" :key="leave_request.id" :info="leave_request" />
     <footer-comp />
 </template>
@@ -37,15 +37,6 @@ export default {
         filteredLeaveRequest() {
             const query = this.searchQuery.toLowerCase();
             return this.$store.state.leave_request.filter(employee => employee.name.toLowerCase().includes(query));
-        },
-        pendingCount() {
-            return this.$store.state.leave_request.filter(req => req.status === 'Pending').length;
-        },
-        approvedCount() {
-            return this.$store.state.leave_request.filter(req => req.status === 'Approved').length;
-        },
-        deniedCount() {
-            return this.$store.state.leave_request.filter(req => req.status === 'Denied').length;
         }
     }
 }

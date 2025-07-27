@@ -1,15 +1,16 @@
 <template>
   <div class="dashboard-container">
-    <navbar-comp class="navbar"/>
-    
+    <navbar-comp class="navbar" />
+
     <main class="dashboard-content">
       <h2 class="dashboard-title">Company Dashboard</h2>
-      
+
       <div class="stats-grid">
         <!-- Employee Count Card -->
         <div class="stat-card employee-count">
           <div class="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
               <circle cx="9" cy="7" r="4"></circle>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -23,7 +24,8 @@
         <!-- Combined Salary Card -->
         <div class="stat-card combined-salary">
           <div class="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="1" x2="12" y2="23"></line>
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
@@ -35,19 +37,23 @@
         <!-- Average Salary Card -->
         <div class="stat-card average-salary">
           <div class="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="1" x2="12" y2="23"></line>
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
           </div>
           <h3>Average Salary</h3>
-          <p class="stat-value">R{{ ($store.getters.combinedSalaries / $store.state.employee_info.length).toLocaleString(undefined, {maximumFractionDigits: 2}) }}</p>
+          <p class="stat-value">
+            R{{ averageSalary }}
+          </p>
         </div>
 
         <!-- Leave Requests Card -->
         <div class="stat-card leave-requests">
           <div class="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -103,16 +109,26 @@ export default {
   computed: {
     // Attendance Line Chart Data
     attendanceChartData() {
-     
-      const attendance = this.$store.state.attendance;
+      const attendance = this.$store.state.attendance; // access the flat array
       const dateMap = {};
-      attendance.forEach(emp => {
-        emp.attendance.forEach(rec => {
-          if (!dateMap[rec.date]) dateMap[rec.date] = { Present: 0, Absent: 0 };
-          dateMap[rec.date][rec.status]++;
-        });
+
+      attendance.forEach(record => {
+        // Format date to readable form (e.g., YYYY-MM-DD)
+        const date = new Date(record.date).toISOString().split('T')[0];
+
+        if (!dateMap[date]) {
+          dateMap[date] = { Present: 0, Absent: 0 };
+        }
+
+        if (record.status === 'present') {
+          dateMap[date].Present++;
+        } else if (record.status === 'absent') {
+          dateMap[date].Absent++;
+        }
       });
+
       const dates = Object.keys(dateMap).sort();
+
       return {
         labels: dates,
         datasets: [
@@ -146,18 +162,16 @@ export default {
     },
 
     performancePieData() {
-      
-      const reviews = this.$store.state.employee_info.map(emp => ({
-        name: emp.name,
-        rating: emp.rating || Math.floor(Math.random() * 5) + 1
-      }));
+      const reviews = this.$store.state.performance_reviews || [];
 
-      const ratingCounts = [0, 0, 0, 0, 0];
-      const ratingNames = [[], [], [], [], []];
-      reviews.forEach(r => {
-        if (r.rating >= 1 && r.rating <= 5) {
-          ratingCounts[r.rating - 1]++;
-          ratingNames[r.rating - 1].push(r.name);
+      const ratingCounts = [0, 0, 0, 0, 0];        // Index 0 = 1 star, Index 4 = 5 stars
+      const ratingNames = [[], [], [], [], []];   // Names grouped by rating
+
+      reviews.forEach(review => {
+        const rating = parseInt(review.rating);   // Ensure rating is an integer
+        if (rating >= 1 && rating <= 5) {
+          ratingCounts[rating - 1]++;
+          ratingNames[rating - 1].push(review.employeeName);
         }
       });
 
@@ -167,7 +181,7 @@ export default {
           data: ratingCounts,
           backgroundColor: ['#ef4444', '#f59e42', '#fbbf24', '#10b981', '#3b82f6'],
         }],
-        ratingNames
+        ratingNames // custom field used in tooltip
       };
     },
     performancePieOptions() {
@@ -190,6 +204,12 @@ export default {
           }
         }
       };
+    },
+    averageSalary() {
+      const total = this.$store.getters.combinedSalaries;
+      const count = this.$store.state.employee_info.length;
+      if (!count) return 0;
+      return (total / count).toLocaleString(undefined, { maximumFractionDigits: 2 });
     }
   }
 }
@@ -199,7 +219,7 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
- background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .navbar {
@@ -218,7 +238,7 @@ export default {
 
 .dashboard-title {
   text-align: center;
-  color:   #0b2545;
+  color: #0b2545;
   margin-bottom: 2.5rem;
   font-size: 2.25rem;
   font-weight: 700;
@@ -232,12 +252,12 @@ export default {
 }
 
 .stat-card {
- background-color: #ffffff;
+  background-color: #ffffff;
   border-radius: 6px;
   padding: 2rem;
   box-shadow: 0 8px 24px rgba(47, 65, 86, 0.12);
   transition: all 0.3s ease;
-  border: 1px solid  #0b2545;
+  border: 1px solid #0b2545;
   position: relative;
   overflow: hidden;
 }
@@ -361,21 +381,21 @@ export default {
   .dashboard-content {
     padding: 1.5rem;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .dashboard-title {
     font-size: 1.8rem;
     margin-bottom: 2rem;
   }
-  
+
   .stat-card {
     padding: 1.5rem;
   }
-  
+
   .stat-value {
     font-size: 1.75rem;
   }
@@ -385,7 +405,7 @@ export default {
   .dashboard-title {
     font-size: 1.6rem;
   }
-  
+
   .stat-icon {
     width: 48px;
     height: 48px;

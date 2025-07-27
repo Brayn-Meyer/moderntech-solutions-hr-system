@@ -5,15 +5,14 @@ export const getEmployees = async() => {
         let [row] = await pool.query("SELECT * FROM employeeinformation")
         return row
     } catch(error) {
-        return error 
+        throw new Error('Database error: ' + err.message);
     }
 }
 
 export const addEmployee = async (name, position, department, salary, employmentHistory, contact) => {
   try {
     await pool.query('INSERT INTO employeeinformation (name, position, department, salary, employmentHistory, contact) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, position, department, salary, employmentHistory, contact]
-    );
+      [name, position, department, salary, employmentHistory, contact]);
 
     const [rows] = await pool.query('SELECT employeeId FROM employeeinformation WHERE name = ?',
       [name]);
@@ -38,7 +37,7 @@ export const removeEmployee = async(id) => {
         await pool.query('DELETE FROM leaverequests WHERE employeeId = ?;', [id])
         await pool.query(`DELETE FROM employeeinformation WHERE employeeId = ?;`, [id])
     } catch(error) {
-        return  error 
+        throw new Error('Database error: ' + err.message);
     }
 }
 

@@ -26,7 +26,7 @@ export const removeEmployeeCon = async(req, res) => {
         await removeEmployee(id)
         res.json({ 
             message : "Employee removed",
-            remaining_employees : await getEmployeeCon() 
+            remaining_employees : await getEmployees() 
         })
     } catch(error) {
         console.log(error)

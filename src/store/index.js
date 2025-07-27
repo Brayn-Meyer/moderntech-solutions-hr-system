@@ -7,6 +7,8 @@ export default createStore({
         payroll_data: [],
         attendance: [],
         leave_request: [],
+        performance_reviews: [],
+        users: []
     },
     getters: {
         attendanceWithCurrentDate: state => {
@@ -18,42 +20,30 @@ export default createStore({
             }));
         },
         combinedSalaries: state => {
-            return state.employee_info.reduce((total, item) => total + item.salary, 0);
+            return state.employee_info.reduce((sum, emp) => sum + (Number(emp.salary) || 0), 0);
+        },
+        pendingLeaveRequests: state => {
+            return state.leave_request.filter(req => req.status === 'Pending').length;
+        },
+        approvedLeaveRequests: state => {
+            return state.leave_request.filter(req => req.status === 'Approved').length;
+        },
+        deniedLeaveRequests: state => {
+            return state.leave_request.filter(req => req.status === 'Denied').length;
         },
         getDepartmentFromName: (state) => (name) => {
             const employee = state.employee_info.find(e => e.name === name);
             return employee ? employee.department : null;
-        }
+        },
     },
     mutations: {
         get_employee_info(state, payload) {
             state.employee_info = payload;
         },
-        add_to_employee_info(state, payload) {
-            state.employee_info.push(payload)
-        },
-        remove_employee(state, index) {
-            state.employee_info.splice(index, 1);
-        },
-
-        update_attendance(payload) { //payload is any info 
-            this.state.attendance = payload
-        },
-        add_to_attendance(state, payload) {
-            state.attendance.push(payload)
-        },
 
         get_payroll_data(state, payload) {
             state.payroll_data = payload;
         },
-        add_to_payroll_data(payload) {
-            this.state.payroll_data.push(payload)
-        },
-
-        // updateLeaveStatus(state, payload) {
-        //     const { empIndex, reqIndex, newStatus } = payload;
-        //     state.attendance[empIndex].leaveRequests[reqIndex].status = newStatus;
-        // },
 
         get_attendance(state, payload) {
             state.attendance = payload;
@@ -61,6 +51,14 @@ export default createStore({
 
         get_leave_request(state, payload) {
             state.leave_request = payload;
+        },
+
+        get_performance_reviews(state, payload) {
+            state.performance_reviews = payload
+        },
+
+        get_users(state, payload) {
+            state.users = payload
         }
     },
     actions: {
@@ -84,14 +82,35 @@ export default createStore({
             commit('get_leave_request', data.data.leave_request)
             console.log(data.data.leave_request)
         },
+        async fetch_performance_reviews_info({ commit }) {
+            let data = await axios.get('http://localhost:3315/performancereview')
+            commit('get_performance_reviews', data.data)
+            console.log(data.data)
+        },
+        async fetch_users_info({ commit }) {
+            let data = await axios.get('http://localhost:3315/login')
+            commit('get_users', data.data.users)
+            console.log(data.data.users)
+        },
+        async fetch_users_password(payload) {
+            return await axios.get('http://localhost:3315/login_password', payload)
+        },
 
-        async add_employee({ dispatch }, employee) {
-            await axios.post('http://localhost:3315/employees', employee)
+        async add_employee({ dispatch }, payload) {
+            await axios.post('http://localhost:3315/employees', payload)
             dispatch("fetch_employee_info")
         },
-        async add_leave_request({ dispatch }, leave_request) {
-            await axios.post('http://localhost:3315/leaverequest', leave_request)
+        async add_leave_request({ dispatch }, payload) {
+            await axios.post('http://localhost:3315/leaverequest', payload)
             dispatch("fetch_leave_request_info")
+        },
+        async add_performance_review({ dispatch }, payload) {
+            await axios.post('http://localhost:3315/performancereview', payload)
+            dispatch("fetch_performance_reviews_info")
+        },
+        async add_users({ dispatch }, payload) {
+            await axios.post('http://localhost:3315/login', payload)
+            dispatch("fetch_users_info")
         },
 
         async edit_payroll({ dispatch }, payload) {
@@ -101,18 +120,34 @@ export default createStore({
         async edit_leave_request({ dispatch }, payload) {
             await axios.patch('http://localhost:3315/leaverequest', payload)
             dispatch("fetch_leave_request_info")
-            // console.log(data.data.leave_request)
+        },
+        async edit_performance_review({ dispatch }, payload) {
+            await axios.patch('http://localhost:3315/performancereview', payload)
+            dispatch("fetch_performance_reviews_info")
         },
 
         async remove_employee({ dispatch }, id) {
             await axios.delete(`http://localhost:3315/employees/${id}`)
             dispatch("fetch_employee_info")
-            // console.log(data.data.employees)
         },
         async remove_leave_request({ dispatch }, id) {
             await axios.delete(`http://localhost:3315/leaverequest/${id}`)
             dispatch("fetch_leave_request_info")
-            // console.log(data.data.employees)
+        },
+        async remove_performance_review({ dispatch }, id) {
+            await axios.delete(`http://localhost:3315/performancereview/${id}`)
+            dispatch("fetch_performance_reviews_info")
+        },
+
+        check_password: async ({ }, payload) => {
+            try {
+                const response = await axios.post('http://localhost:3315/check_password', payload);
+                console.log('Password check result:', response.data.status);
+                return response.data.status; // true or false
+            } catch (error) {
+                console.error('check_password error:', error);
+                return false; // fail-safe fallback
+            }
         }
     },
     modules: {

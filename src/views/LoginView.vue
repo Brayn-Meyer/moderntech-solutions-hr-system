@@ -1,4 +1,3 @@
-
 <template>
   <div class="logo-container">
     <div class="main-wrapper">
@@ -9,17 +8,17 @@
 
       <!-- Form Side -->
       <div class="wrapper animate">
-        <form action="/home" method="t">
+        <form @submit.prevent="log_in">
           <div class="form-header">
             <h1>Welcome To ModernTech Solutions</h1>
           </div>
 
           <div class="container">
             <label for="uname"><b>Username:</b></label>
-            <input type="text" placeholder="Enter Username" name="uname" required />
+            <input v-model="logIn.username" type="text" placeholder="Enter Username" name="uname" required />
 
             <label for="psw"><b>Password:</b></label>
-            <input type="password" placeholder="Enter Password" name="psw" required />
+            <input v-model="logIn.password" type="password" placeholder="Enter Password" name="psw" required />
 
             <button type="submit" class="loginbtn">Login</button><br />
             <label>
@@ -32,10 +31,10 @@
             </div>
           </div>
 
-          <div class="container bottom-container">
+          <!-- <div class="container bottom-container">
             <button type="button" class="cancelbtn">Cancel</button>
             <span class="psw">Forgot <a href="#">password?</a></span>
-          </div>
+          </div> -->
         </form>
       </div>
     </div>
@@ -44,21 +43,21 @@
     <div v-if="showSignup" class="signup-modal">
       <div class="signup-wrapper">
         <h2>Create an Account</h2>
-        <form action="/signup" method="post">
+        <form @submit.prevent="add_user">
           <label for="name"><b>Name:</b></label>
-          <input type="text" placeholder="Full Name" required />
+          <input v-model="newUser.full_name" type="text" placeholder="Full Name" required />
 
           <label for="username"><b>Username:</b></label>
-          <input type="text" placeholder="Username" required />
+          <input v-model="newUser.username" type="text" placeholder="Username" required />
 
           <label for="email"><b>Email:</b></label>
-          <input type="email" placeholder="Email" required />
+          <input v-model="newUser.email" type="email" placeholder="Email" required />
 
           <label for="password"><b>Password:</b></label>
-          <input type="password" placeholder="Password" required />
+          <input v-model="newUser.password" type="password" placeholder="Password" required />
 
           <label for="password"><b>Confirm Password:</b></label>
-          <input type="password" placeholder="Confirm Password" required />
+          <input v-model="conPassword" type="password" placeholder="Confirm Password" required />
 
           <button type="submit" class="loginbtn">Sign Up</button>
           <button type="button" class="cancelbtn" @click="showSignup = false">Cancel</button>
@@ -69,13 +68,67 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
-      showSignup: false
+      showSignup: false,
+      newUser: {
+        full_name: '',
+        username: '',
+        email: '',
+        password: '',
+      },
+      conPassword: '',
+
+      logIn: {
+        username: '',
+        password: ''
+      }
     };
+  },
+  methods: {
+    add_user() {
+      if (this.newUser.password !== this.conPassword) {
+        alert("Passwords doesn't match.");
+        return;
+      }
+      for (let user of this.$store.state.users) {
+        if (this.newUser.username === user.username) {
+          alert("Enter another username.");
+          return;
+        }
+      }
+      try {
+        alert("New user has been added.");
+        this.$store.dispatch('add_users', this.newUser)
+        this.showSignup = false
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async log_in() {
+      // Try to find the user first
+      const user = this.$store.state.users.find(u => u.username === this.logIn.username);
+
+      if (!user) {
+        alert("Username invalid. Try creating an account.");
+        return;
+      }
+
+      // Now check password using Vuex action (assumed to return true/false)
+      const isValid = await this.$store.dispatch('check_password', {password: this.logIn.password, hashPassword: user.password});
+      console.log(isValid)
+
+      if (isValid) {
+        this.$router.push('/dashboard');
+      } else {
+        alert("Password invalid.");
+      }
+    }
   }
 };
+
 </script>
 
 <style scoped>
@@ -216,6 +269,7 @@ span.psw a {
     opacity: 0;
     transform: translateY(50px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -227,10 +281,12 @@ span.psw a {
     opacity: 0;
     transform: scale(0.8) translateY(-30px);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.1) translateY(10px);
   }
+
   100% {
     transform: scale(1) translateY(0);
   }
@@ -364,5 +420,4 @@ span.psw a {
     padding: 30px 20px;
   }
 }
-
 </style>

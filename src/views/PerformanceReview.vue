@@ -146,9 +146,9 @@
           </button>
         </div>
       </div> -->
-    </div>
+  </div>
 
-    <!-- <div v-if="selectedEmployee">
+  <!-- <div v-if="selectedEmployee">
       <div class="employee-details">
         <p><strong>Name:</strong> {{ selectedEmployee.name }}</p>
         <p><strong>Department:</strong> {{ selectedEmployee.department }}</p>
@@ -159,7 +159,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { ref, computed, onMounted, watch } from 'vue';
 import NavbarComp from '@/components/NavbarComp.vue';
 import FooterComp from '@/components/FooterComp.vue';
@@ -173,17 +172,19 @@ export default {
   setup() {
     const store = useStore();
 
+    // Reactive store access
+    const reviews = computed(() => store.state.performance_reviews || []);
+
     // Build employees array from Vuex store
     const employees = computed(() =>
       store.state.employee_info.map(emp => ({
-        id: emp.id || emp.employeeId, // support both
+        id: emp.id || emp.employeeId,
         name: emp.name,
         department: emp.department
       }))
     );
 
     // State
-    const reviews = ref([]);
     const loading = ref(false);
     const error = ref('');
 
@@ -193,9 +194,7 @@ export default {
     const sortField = ref('reviewDate');
     const sortDirection = ref('desc');
     const showReviewModal = ref(false);
-    // const showDeleteModal = ref(false);
     const editingReview = ref(null);
-    // const reviewToDelete = ref(null);
 
     const form = ref({
       employeeId: '',
@@ -207,16 +206,12 @@ export default {
       status: 'Draft'
     });
 
-    // API base URL
-    const API_URL = 'http://localhost:3315/performancereview';
-
     // Fetch all reviews
     async function fetchReviews() {
       loading.value = true;
       error.value = '';
       try {
-        const res = await axios.get(API_URL);
-        reviews.value = res.data;
+        await store.dispatch("fetch_performance_reviews_info");
       } catch (err) {
         error.value = 'Failed to load reviews';
       } finally {
@@ -229,8 +224,7 @@ export default {
       loading.value = true;
       error.value = '';
       try {
-        const res = await axios.post(API_URL, reviewData);
-        reviews.value.push(res.data);
+        await store.dispatch("add_performance_review", reviewData);
       } catch (err) {
         error.value = 'Failed to create review';
       } finally {
@@ -243,9 +237,7 @@ export default {
       loading.value = true;
       error.value = '';
       try {
-        const res = await axios.put(`${API_URL}/${id}`, reviewData);
-        const idx = reviews.value.findIndex(r => r.id === id);
-        if (idx !== -1) reviews.value[idx] = res.data;
+        await store.dispatch("edit_performance_review", reviewData);
       } catch (err) {
         error.value = 'Failed to update review';
       } finally {
@@ -258,8 +250,7 @@ export default {
       loading.value = true;
       error.value = '';
       try {
-        await axios.delete(`${API_URL}/${id}`);
-        reviews.value = reviews.value.filter(r => r.id !== id);
+        await store.dispatch("remove_performance_review", id); // fixed: should pass `id`, not `reviewData`
       } catch (err) {
         error.value = 'Failed to delete review';
       } finally {
@@ -272,9 +263,12 @@ export default {
         await store.dispatch('fetch_employee_info');
       }
       await fetchReviews();
+
+      if (!Array.isArray(store.state.performance_reviews)) {
+        await store.dispatch("fetch_performance_reviews_info");
+      }
     });
 
-    // Computed properties
     const departments = computed(() => {
       const depts = new Set();
       employees.value.forEach(emp => depts.add(emp.department));
@@ -284,7 +278,6 @@ export default {
     const filteredReviews = computed(() => {
       let filtered = [...reviews.value];
 
-      // Filter by search query
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
         filtered = filtered.filter(review =>
@@ -292,16 +285,14 @@ export default {
         );
       }
 
-      // Filter by department
       if (selectedDepartment.value) {
         filtered = filtered.filter(review =>
           review.department === selectedDepartment.value
         );
       }
 
-      // Sorting
       filtered.sort((a, b) => {
-        let modifier = sortDirection.value === 'asc' ? 1 : -1;
+        const modifier = sortDirection.value === 'asc' ? 1 : -1;
         if (a[sortField.value] < b[sortField.value]) return -1 * modifier;
         if (a[sortField.value] > b[sortField.value]) return 1 * modifier;
         return 0;
@@ -310,7 +301,6 @@ export default {
       return filtered;
     });
 
-    // Methods
     const formatDate = (dateString) => {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
       return new Date(dateString).toLocaleDateString(undefined, options);
@@ -328,7 +318,6 @@ export default {
     const openReviewModal = (review) => {
       editingReview.value = review;
       if (review) {
-        // Editing existing review
         form.value = {
           employeeId: review.employeeId,
           reviewDate: review.reviewDate,
@@ -339,7 +328,6 @@ export default {
           status: review.status
         };
       } else {
-        // Adding new review
         form.value = {
           employeeId: '',
           reviewDate: new Date().toISOString().split('T')[0],
@@ -362,29 +350,21 @@ export default {
       const employee = employees.value.find(emp => emp.id === parseInt(form.value.employeeId));
       if (!employee) return;
 
-      if (editingReview.value) {
-        // Update
-        await updateReview(editingReview.value.id, {
-          ...form.value,
-          employeeName: employee.name,
-          department: employee.department
-        });
-      } else {
-        // Create
-        await createReview({
-          ...form.value,
-          employeeName: employee.name,
-          department: employee.department
-        });
-      }
-      closeModal();
-      await fetchReviews(); // Refresh list
-    };
+      const reviewPayload = {
+        ...form.value,
+        employeeName: employee.name,
+        department: employee.department
+      };
 
-    // const confirmDelete = (id) => {
-    //   reviewToDelete.value = id;
-    //   showDeleteModal.value = true;
-    // };
+      if (editingReview.value) {
+        await updateReview(editingReview.value.id, reviewPayload);
+      } else {
+        await createReview(reviewPayload);
+      }
+
+      closeModal();
+      await fetchReviews();
+    };
 
     const selectedEmployee = computed(() =>
       employees.value.find(emp => emp.id === Number(form.value.employeeId))
@@ -400,7 +380,6 @@ export default {
       departments,
       filteredReviews,
       showReviewModal,
-      // showDeleteModal,
       editingReview,
       form,
       formatDate,
@@ -408,7 +387,6 @@ export default {
       openReviewModal,
       closeModal,
       submitReview,
-      // confirmDelete,
       deleteReview,
       selectedEmployee
     };

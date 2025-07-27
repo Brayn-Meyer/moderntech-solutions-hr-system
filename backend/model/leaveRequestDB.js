@@ -34,26 +34,6 @@ export const addLeaveRequest = async(name, date, reason, status) => {
     if (err) return res.status(500).json({ error: err });
         res.json({ id: result.insertId, ...req.body });
     });
-
-    // export const addLeaveRequest = async (name, date, reason) => {
-    // Step 1: Get employee ID from name
-    // const [rows] = await db.query(
-    //     'SELECT employee_id FROM employees WHERE name = ?',
-    //     [name]
-    // );
-
-    // if (rows.length === 0) {
-    //     throw new Error('Employee not found');
-    // }
-
-    // const employeeId = rows[0].employee_id;
-
-    // Step 2: Insert into leave_requests
-    // await db.query(
-    //     'INSERT INTO leave_requests (employee_id, date, reason) VALUES (?, ?, ?)',
-    //     [employeeId, date, reason]
-    // );
-    // };
 }
 
 export const editLeaveRequest = async(id, status) => {

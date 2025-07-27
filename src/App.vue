@@ -9,6 +9,8 @@
       this.$store.dispatch("fetch_payroll_info")
       this.$store.dispatch("fetch_attendance_info")
       this.$store.dispatch("fetch_leave_request_info")
+      this.$store.dispatch("fetch_performance_reviews_info")
+      this.$store.dispatch("fetch_users_info")
       // this.$store.dispatch('fetch_attendance'),
       // this.$store.dispatch('fetch_payroll_data')
       // this.$store.commit('update_to_leave_requests')
