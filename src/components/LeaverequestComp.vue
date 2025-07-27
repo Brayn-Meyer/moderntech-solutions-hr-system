@@ -39,18 +39,10 @@ export default {
       return new Date(dateStr).toLocaleDateString('en-GB', options);
     },
     async editLeaveRequest(id, newStatus) {
-      await axios.patch(`http://localhost:3315/leaverequest`, { id: id, status: newStatus })
-      this.$store.dispatch('fetch_employee_info')
-
-      let data = await axios.get('http://localhost:3315/leaverequest')
-      this.$store.commit('get_leave_request', data.data.leave_request)
+      this.$store.dispatch(`edit_leave_request`, { id: id, status: newStatus })
     },
     async removeRequest(id) {
-      await axios.delete(`http://localhost:3315/leaverequest/${id}`)
-      this.$store.dispatch('fetch_employee_info')
-
-      let data = await axios.get('http://localhost:3315/leaverequest')
-      this.$store.commit('get_leave_request', data.data.leave_request)
+      this.$store.dispatch(`remove_leave_request`,  id)
     }
   }
 };

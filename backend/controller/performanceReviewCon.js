@@ -2,7 +2,7 @@ import { getPerformanceReviews, getSinglePerformanceReviews, addPerformanceRevie
 
 export const getPerformanceReviewsCon = async (req, res) => {
   try {
-    const reviews = await getAll();
+    const reviews = await getPerformanceReviews();
     res.json(reviews);
   } catch (error) {
     console.error(error);
@@ -12,7 +12,7 @@ export const getPerformanceReviewsCon = async (req, res) => {
 
 export const getSinglePerformanceReviewsCon = async (req, res) => {
   try {
-    const review = await getById(req.params.id);
+    const review = await getSinglePerformanceReviews(req.params.id);
     if (!review) {
       return res.status(404).json({ error: 'Review not found' });
     }
@@ -25,7 +25,7 @@ export const getSinglePerformanceReviewsCon = async (req, res) => {
 
 export const addPerformanceReviewsCon = async (req, res) => {
   try {
-    const newReview = await create(req.body);
+    const newReview = await addPerformanceReviews(req.body);
     res.status(201).json(newReview);
   } catch (error) {
     console.error(error);
@@ -35,7 +35,7 @@ export const addPerformanceReviewsCon = async (req, res) => {
 
 export const editPerformanceReviewsCon = async (req, res) => {
   try {
-    const updatedReview = await update(req.params.id, req.body);
+    const updatedReview = await editPerformanceReviews(req.params.id, req.body);
     res.json(updatedReview);
   } catch (error) {
     console.error(error);
@@ -45,7 +45,7 @@ export const editPerformanceReviewsCon = async (req, res) => {
 
 export const removePerformanceReviewsCon = async (req, res) => {
   try {
-    await deleteReviewDB(req.params.id);
+    await removePerformanceReviews(req.params.id);
     res.status(204).end();
   } catch (error) {
     console.error(error);

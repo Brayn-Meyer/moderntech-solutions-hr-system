@@ -15,8 +15,8 @@ export const addEmployeeCon = async(req, res) => {
         res.json({ message : "Employee added",
                 remaining_employees : await getEmployeeCon()
             })
-    } catch(error) {
-        console.log(error)
+    } catch(err) {
+        res.status(500).json({ error: err.message });
     }
 };
 

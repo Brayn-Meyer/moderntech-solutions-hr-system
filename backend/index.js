@@ -4,7 +4,7 @@ import cors from 'cors'
 
 import { getEmployeeCon, addEmployeeCon, removeEmployeeCon } from './controller/employeeCon.js'
 
-import { getPayrollCon } from './controller/payrollCon.js'
+import { getPayrollCon, editPayrollCon } from './controller/payrollCon.js'
 
 import { getAttendanceCon } from './controller/attendanceCon.js'
 
@@ -25,6 +25,7 @@ app.post('/employees', addEmployeeCon);
 app.delete("/employees/:id", removeEmployeeCon)
 
 app.get("/payrolls", getPayrollCon)
+app.patch("/payrolls", editPayrollCon)
 
 app.get("/attendance", getAttendanceCon)
 

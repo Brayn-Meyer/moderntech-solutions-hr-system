@@ -25,45 +25,26 @@
 
                     <div class="management-border">
                         <div class="management-option">
-                            <h3>Search Employees</h3>
-                            <input type="text" placeholder="Enter employee name..." class="search-input"
-                                v-model="searchQuery" @input="searchEmployees">
-                            <button class="action-btn" @click="searchEmployees">Search</button>
+                            <h3>Select Employee</h3>
+                            <select required v-model="modifiedPayroll.name" class="search-input">
+                                <option disabled value="">Select an employee</option>
+                                <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId" :value="employee.name">
+                                    {{ employee.name
+                                     }}
+                                </option>
+                            </select>
                         </div>
 
                         <div class="management-option">
-                            <h3>Update Employees</h3>
-                            <select class="employee-select" v-model="selectedEmployee" @change="loadEmployeeData">
-                                <option value="">Select employee to update</option>
-                                <option v-for="(employee, index) in filteredEmployees" :key="index"
-                                    :value="employee.id">
-                                    {{ employee.name }}
-                                </option>
-                            </select>
-                            <div v-if="selectedEmployeeData" class="employee-form">
-                                <input v-model="selectedEmployeeData.name" placeholder="Name">
-                                <input v-model="selectedEmployeeData.position" placeholder="Position">
-                                <input v-model="selectedEmployeeData.hourlyRate" placeholder="Hourly Rate"
-                                    type="number">
-                                <button class="action-btn" @click="updateEmployee">Update</button>
-                            </div>
+                            <h3>Hours Worked</h3>
+                            <input required type="number" class="employee-select" v-model="modifiedPayroll.hoursWorked">
                         </div>
 
                         <div class="management-option">
-                            <h3>Update Payrolls</h3>
-                            <select class="employee-select" v-model="selectedPayrollEmployee">
-                                <option value="">Select employee payroll</option>
-                                <option v-for="(employee, index) in filteredEmployees" :key="index"
-                                    :value="employee.id">
-                                    {{ employee.name }}
-                                </option>
-                            </select>
-                            <div v-if="selectedPayrollEmployee" class="payroll-form">
-                                <input v-model="payrollData.hoursWorked" placeholder="Hours Worked" type="number">
-                                <input v-model="payrollData.leaveDeductions" placeholder="Leave Deductions"
-                                    type="number">
-                                <button class="action-btn" @click="updatePayroll">Update Payroll</button>
-                            </div>
+                            <h3>Leave Days Taken</h3>
+                            <input required type="number" class="employee-select" v-model="modifiedPayroll.leaveDeductions">
+                            <button class="action-btn" @click="updatePayroll
+                            ">Edit Payroll</button>
                         </div>
                     </div>
                 </div>
@@ -143,7 +124,7 @@
                 <table class="payslip-table">
                     <tr>
                         <td>Hourly Rate</td>
-                        <td>R{{ currentPayslip.hourlyRate.toFixed(2) }}</td>
+                        <td>R{{ currentPayslip.hourlyRate }}</td>
                     </tr>
                     <tr>
                         <td>Hours Worked</td>
@@ -159,7 +140,7 @@
                 <table class="payslip-table">
                     <tr>
                         <td>Leave Deductions</td>
-                        <td>R{{ currentPayslip.leaveDeductions.toFixed(2) }}</td>
+                        <td>R{{ currentPayslip.leaveDeductions }}</td>
                     </tr>
                 </table>
 
@@ -185,28 +166,18 @@
 </template>
 
 <script>
-import PayrollCard from '@/components/PayrollCard.vue';
 import NavbarComp from '@/components/NavbarComp.vue';
 import PaycalComp from '@/components/PaycalComp.vue';
 import FooterComp from '@/components/FooterComp.vue';
 
 export default {
     components: {
-        PayrollCard,
         NavbarComp,
         PaycalComp,
         FooterComp
     },
     data() {
         return {
-            searchQuery: '',
-            selectedEmployee: '',
-            selectedEmployeeData: null,
-            selectedPayrollEmployee: '',
-            payrollData: {
-                hoursWorked: 0,
-                leaveDeductions: 0
-            },
             payrollFilter: '',
             currentPage: 1,
             itemsPerPage: 10,
@@ -215,6 +186,13 @@ export default {
             showPayslip: false,
             currentPayslip: null,
             showEmployeeModal: false,
+
+            modifiedPayroll: {
+                name: '',
+                hoursWorked: '',
+                leaveDeductions: ''
+            }
+                
         }
     },
     computed: {
@@ -294,12 +272,11 @@ export default {
             }
         },
         updatePayroll() {
-            const index = this.employees.findIndex(e => e.id === this.selectedPayrollEmployee);
-            if (index !== -1) {
-                this.employees[index].hoursWorked = parseFloat(this.payrollData.hoursWorked);
-                this.employees[index].leaveDeductions = parseFloat(this.payrollData.leaveDeductions);
-                alert('Payroll updated successfully!');
-            }
+            this.$store.dispatch("edit_payroll", this.modifiedPayroll)
+            setTimeout(() => {
+                this.showEmployeeModal = false
+                this.$store.dispatch("fetch_payroll_info")
+            }, 2000);
         },
         calculateSalary(employee) {
             return (employee.hourlyRate * employee.hoursWorked) - employee.leaveDeductions;

@@ -1,16 +1,8 @@
 <template>
   <div>
-    <div class="top-bar">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search employee or leave"
-        class="search-input"
-      />
-      <button class="open-form-button" @click="showForm = true">
-        <i class="fas fa-calendar-plus"></i> Request Leave
-      </button>
-    </div>
+    <button class="open-form-button" @click="showForm = true">
+      <i class="fas fa-calendar-plus"></i> Request Leave
+    </button>
 
     <!-- Modal -->
     <div v-if="showForm" class="modal-overlay">
@@ -30,14 +22,12 @@
         <form @submit.prevent="submitLeaveRequest" class="leave-form">
           <div class="form-group">
             <label for="employeeName">Employee Name</label>
-            <input
-              id="employeeName"
-              v-model="newRequest.name"
-              type="text"
-              placeholder="Enter full name"
-              required
-              class="form-input"
-            />
+            <select id="employeeName" v-model="newRequest.name" required class="form-input">
+              <option disabled value="">Select an employee</option>
+              <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId" :value="employee.name">
+                {{ employee.name }}
+              </option>
+            </select>
           </div>
 
           <div class="form-row">
@@ -53,19 +43,17 @@
             </div>
           </div>
 
-          <div class="form-row">
+          <!-- <div class="form-row">
             <div class="form-group">
               <label for="leaveDepartment">Department</label>
-              <input
-                id="leaveDepartment"
-                v-model="newRequest.department"
-                type="text"
-                placeholder="Enter department"
-                required
-                class="form-input"
-              />
+              <select id="leaveDepartment" v-model="newRequest.department" required class="form-input">
+                <option disabled value="">Select department</option>
+                <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId" :value="employee.department">
+                  {{ employee.department }}
+                </option>
+              </select>
             </div>
-          </div>
+          </div> -->
 
           <div class="form-group">
             <label for="leaveReason">Reason for Leave</label>
@@ -90,48 +78,51 @@
 
 <script>
 export default {
-  name: 'LeaveRequestForm',
   data() {
     return {
       showForm: false,
-      searchQuery: "",
       newRequest: {
         name: "",
-        department: "",
+        department: this.employeeDepartment,
         date: "",
         reason: "",
         status: "Pending"
       }
     };
   },
+  computed: {
+    employeeDepartment() {
+      return this.$store.getters.getDepartmentFromName(this.name);
+    }
+  },
   methods: {
     submitLeaveRequest() {
-      if (!this.validateForm()) return;
+      // if (!this.validateForm()) return;
 
       this.$store.dispatch("add_leave_request", this.newRequest);
       this.resetForm();
       this.showSuccessNotification();
       this.showForm = false;
     },
-    validateForm() {
-      if (!this.newRequest.name.trim()) {
-        this.showError("Please enter employee name");
-        return false;
-      }
-      if (!this.newRequest.date) {
-        this.showError("Please select a leave date");
-        return false;
-      }
-      if (!this.newRequest.department.trim()) {
-        this.showError("Please provide a department");
-        return false;
-      }
-      if (!this.newRequest.reason.trim()) {
-        this.showError("Please provide a reason for leave");
-        return false;
-      }
-      return true;
-    },
+    // validateForm() {
+    //   if (!this.newRequest.name.trim()) {
+    //     this.showError("Please enter employee name");
+    //     return false;
+    //   }
+    //   if (!this.newRequest.date) {
+    //     this.showError("Please select a leave date");
+    //     return false;
+    //   }
+    //   if (!this.newRequest.department.trim()) {
+    //     this.showError("Please provide a department");
+    //     return false;
+    //   }
+    //   if (!this.newRequest.reason.trim()) {
+    //     this.showError("Please provide a reason for leave");
+    //     return false;
+    //   }
+    //   return true;
+    // },
     showError(message) {
       alert(message);
     },
@@ -155,27 +146,7 @@ export default {
 </script>
 
 <style scoped>
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 1rem;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
 
-/* Search Input */
-.search-input {
-  flex: 1;
-  min-width: 200px;
-  padding: 0.6rem 1rem;
-  border: 1px solid #c8d9e6;
-  border-radius: 6px;
-  font-size: 1rem;
-  color: #2f4156;
-}
-
-/* Button aligned left by default inside .top-bar */
 .open-form-button {
   background-color: #0b2545;
   color: #f5efeb;

@@ -10,7 +10,7 @@
         </div>
         <div class="actions">
             <button class="view" @click="$emit('view', employee)">View</button>
-            <!-- <button class="edit">Edit</button> -->
+            <button class="edit">Edit</button>
             <button class="delete" @click="$emit('delete', employee)">Delete</button>
         </div>
     </div>

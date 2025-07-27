@@ -9,6 +9,24 @@ export const getPayrolls = async() => {
     }
 }
 
+export const editPayroll = async(name, hoursWorked, leaveDeductions) => {
+    try{
+        const [rows] = await pool.query('SELECT employeeId FROM employeeinformation WHERE name = ?',
+        [name]);
+
+        if (rows.length === 0) {
+        throw new Error('Employee not found');
+        }
+
+        const employeeId = rows[0].employeeId;
+
+        await pool.query(`UPDATE payrolldata SET hoursWorked = ?, leaveDeductions = ? WHERE employeeId = ?;`,
+        [hoursWorked, leaveDeductions, employeeId])
+    } catch(error) {
+        return error
+    }
+}
+
 // SELECT 
 //     employees.name AS employee_name,
 //     departments.department_name

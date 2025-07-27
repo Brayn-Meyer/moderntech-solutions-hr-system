@@ -4,14 +4,17 @@
     <div class="attendance-container">
         <div class="controls">
             <h2><i class="fas fa-clipboard-check"></i> Employee Attendance</h2>
-            <div class="search-container">
-                <input type="text" v-model="searchQuery" class="search-box" placeholder="Search employees...">
-            </div>
         </div>
 
         <div class="master-date-control">
-            <span class="master-date-label">Set Date for All:</span>
-            <input type="date" v-model="masterDate" class="date-input" @change="updateAllDates">
+
+            <span class="master-date-label">Search by Name :</span>
+            <div class="search-container">
+                <input type="text" v-model="searchQuery" class="search-box" placeholder="Search employees...">
+            </div>
+            <br>
+            <span class="master-date-label">Search by Date :</span>
+            <input type="date" v-model="dateQuery" class="date-input" @change="updateAllDates">
         </div>
 
         <table>
@@ -25,7 +28,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(employee, index) in filteredEmployees" :key="index">
+                <tr v-for="(employee, index) in filteredList" :key="index">
                     <td>{{ index + 1 }}</td>
                     <td class="employee-cell">
                         <div class="avatar" :style="{ background: getAvatarGradient(employee.name) }">
@@ -35,8 +38,9 @@
                     </td>
                     <td>{{ employee.department || 'General' }}</td>
                     <td>
-                        <input type="date" :value="formatDate(employee.date)" @change="updateDate($event, employee)"
-                            class="date-input employee-date" />
+                        <!-- <input type="date" :value="formatDate(employee.date)" @change="updateDate($event, employee)"
+                            class="date-input employee-date" /> -->
+                        {{ formatDate(employee.date) }}
                     </td>
                     <td>
                         <span :class="getStatusClass(employee.status)">
@@ -79,11 +83,9 @@ export default {
 
     name: 'Attendance',
     data() {
-        const masterDate = '2025-07-27';
         return {
-            masterDate,
+            dateQuery: '',
             searchQuery: '',
-            selectedDate: '',
             availableDates: []
         };
     },
@@ -120,12 +122,6 @@ export default {
             }
             return 'Unknown';
         },
-        updateMasterDateIfUniform() { },
-        updateAllDates() {
-            this.attendanceAndLeave.forEach(emp => {
-                emp.currentDate = this.masterDate;
-            });
-        },
         formatDate(date) {
             if (!date) return '';
             return new Date(date).toISOString().split('T')[0]; // "2025-07-27"
@@ -149,14 +145,23 @@ export default {
                 };
             });
         },
-        filteredEmployees() {
-            const map = new Map();
-            this.$store.state.attendance.forEach(entry => {
-                if (!map.has(entry.name) || new Date(entry.date) > new Date(map.get(entry.name).date)) {
-                    map.set(entry.name, entry);
+        filteredList() {
+            return this.$store.state.attendance.filter(item => {
+                const matchesText = item.name?.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+                // If there's no date, skip this item entirely
+                if (!item.date || isNaN(new Date(item.date))) {
+                    console.warn("Skipping invalid date:", item.date, item);
+                    return false;
                 }
+
+                const itemDate = new Date(item.date).toISOString().split('T')[0];
+                const queryDate = this.dateQuery ? new Date(this.dateQuery).toISOString().split('T')[0] : null;
+
+                const matchesDate = queryDate ? itemDate === queryDate : true;
+
+                return matchesText && matchesDate;
             });
-            return Array.from(map.values());
         }
     }
 }

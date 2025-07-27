@@ -19,6 +19,10 @@ export default createStore({
         },
         combinedSalaries: state => {
             return state.employee_info.reduce((total, item) => total + item.salary, 0);
+        },
+        getDepartmentFromName: (state) => (name) => {
+            const employee = state.employee_info.find(e => e.name === name);
+            return employee ? employee.department : null;
         }
     },
     mutations: {
@@ -51,59 +55,63 @@ export default createStore({
         //     state.attendance[empIndex].leaveRequests[reqIndex].status = newStatus;
         // },
 
-        get_attendance(state, payload){
+        get_attendance(state, payload) {
             state.attendance = payload;
         },
 
-        get_leave_request(state, payload){
+        get_leave_request(state, payload) {
             state.leave_request = payload;
         }
     },
     actions: {
-        async fetch_employee_info({commit}) {
+        async fetch_employee_info({ commit }) {
             let data = await axios.get('http://localhost:3315/employees')
             commit('get_employee_info', data.data.employees)
             console.log(data.data.employees)
         },
-        async fetch_payroll_info({commit}) {
+        async fetch_payroll_info({ commit }) {
             let data = await axios.get('http://localhost:3315/payrolls')
             commit('get_payroll_data', data.data.payrolls)
             console.log(data.data.payrolls)
         },
-        async fetch_attendance_info({commit}) {
+        async fetch_attendance_info({ commit }) {
             let data = await axios.get('http://localhost:3315/attendance')
             commit('get_attendance', data.data.attendance)
             console.log(data.data.attendance)
         },
-        async fetch_leave_request_info({commit}) {
+        async fetch_leave_request_info({ commit }) {
             let data = await axios.get('http://localhost:3315/leaverequest')
             commit('get_leave_request', data.data.leave_request)
             console.log(data.data.leave_request)
         },
 
-        async add_employee({commit}, employee) {
-            const data = await axios.post('http://localhost:3315/employees', employee)
-            this.dispatch("fetch_employee_info")
+        async add_employee({ dispatch }, employee) {
+            await axios.post('http://localhost:3315/employees', employee)
+            dispatch("fetch_employee_info")
         },
-        async add_leave_request({commit}, leave_request) {
-            const data = await axios.post('http://localhost:3315/leaverequest', leave_request)
-            this.dispatch("fetch_leave_request_info")
+        async add_leave_request({ dispatch }, leave_request) {
+            await axios.post('http://localhost:3315/leaverequest', leave_request)
+            dispatch("fetch_leave_request_info")
         },
 
-        async edit_leave_request({commit}, id, newStatus) {
-            await axios.patch('http://localhost:3315/leaverequest', {id:id, status:newStatus })
-            this.dispatch("fetch_leave_request_info")
+        async edit_payroll({ dispatch }, payload) {
+            await axios.patch('http://localhost:3315/payrolls', payload);
+            dispatch("fetch_payroll_info");
+        },
+        async edit_leave_request({ dispatch }, payload) {
+            await axios.patch('http://localhost:3315/leaverequest', payload)
+            dispatch("fetch_leave_request_info")
             // console.log(data.data.leave_request)
         },
 
-        async remove_employee({commit}, id) {
+        async remove_employee({ dispatch }, id) {
             await axios.delete(`http://localhost:3315/employees/${id}`)
-            this.dispatch("fetch_employee_info")
+            dispatch("fetch_employee_info")
             // console.log(data.data.employees)
         },
-        async remove_leave_request({commit}, id) {
+        async remove_leave_request({ dispatch }, id) {
             await axios.delete(`http://localhost:3315/leaverequest/${id}`)
-            this.dispatch("fetch_leave_request_info")
+            dispatch("fetch_leave_request_info")
             // console.log(data.data.employees)
         }
     },

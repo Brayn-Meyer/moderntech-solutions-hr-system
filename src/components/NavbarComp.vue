@@ -5,7 +5,7 @@
             
         </div>
         <div class="nav-links">
-            <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
+            <router-link to="/home" class="nav-link">Dashboard</router-link>
             <router-link to="/employee" class="nav-link">Employees</router-link>
             <router-link to="/payroll" class="nav-link">Payroll</router-link>
             <router-link to="/attendance" class="nav-link">Attendance</router-link>
@@ -88,25 +88,6 @@ export default {
         flex-direction: column;
         height: auto;
         padding: 1rem;
-        width:100%;
-    }
-    .nav-links {
-        margin-top: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1rem;
-    }
-    .company-name {
-        font-size: 1.2rem;
-    }
-}
-@media (max-width: 425px) {
-    .navbar {
-        position: relative;
-        flex-direction: column;
-        height: auto;
-        padding: 1rem;
-        width:100%;
     }
     .nav-links {
         margin-top: 1rem;

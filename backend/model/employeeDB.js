@@ -9,12 +9,26 @@ export const getEmployees = async() => {
     }
 }
 
-export const addEmployee = async(name, position, department, salary, employmentHistory, contact) => {
-    pool.query('INSERT INTO employeeinformation (name, position, department, salary, employmentHistory, contact) VALUES (?, ?, ?, ?, ?, ?)', 
-    [name, position, department, salary, employmentHistory, contact], (err, result) => {
-    if (err) return res.status(500).json({ error: err });
-        res.json({ id: result.insertId, ...req.body });
-    });
+export const addEmployee = async (name, position, department, salary, employmentHistory, contact) => {
+  try {
+    await pool.query('INSERT INTO employeeinformation (name, position, department, salary, employmentHistory, contact) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, position, department, salary, employmentHistory, contact]
+    );
+
+    const [rows] = await pool.query('SELECT employeeId FROM employeeinformation WHERE name = ?',
+      [name]);
+
+    if (rows.length === 0) {
+      throw new Error('Employee not found');
+    }
+
+    const employeeId = rows[0].employeeId;
+
+    await pool.query('INSERT INTO payrolldata (employeeId, hoursWorked, leaveDeductions, finalSalary) VALUES (?, ?, ?, ?)',
+      [employeeId, 160, 0, Number(salary)]);
+  } catch (err) {
+    throw new Error('Database error: ' + err.message);
+  }
 }
 
 export const removeEmployee = async(id) => {

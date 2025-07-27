@@ -19,7 +19,7 @@ export const getSingleLeaveRequest = async(id) => {
 }
 
 export const addLeaveRequest = async(name, date, reason, status) => {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
         'SELECT employeeId FROM employeeinformation WHERE name = ?',
         [name]
     );
@@ -27,7 +27,7 @@ export const addLeaveRequest = async(name, date, reason, status) => {
         throw new Error('Employee not found');
     }
 
-    const employeeId = rows[0].employee_id;
+    const employeeId = rows[0].employeeId;
 
     pool.query('INSERT INTO leaverequests (employeeId, date, reason, status) VALUES (?, ?, ?, ?)',
     [employeeId, date, reason, status], (err, result) => {

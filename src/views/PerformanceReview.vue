@@ -50,7 +50,7 @@
               <button @click="openReviewModal(review)" class="action-btn edit-btn">
                 Edit
               </button>
-              <button @click="confirmDelete(review.id)" class="action-btn delete-btn">
+              <button @click="deleteReview(review.id)" class="action-btn delete-btn">
                 Delete
               </button>
             </td>
@@ -133,7 +133,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="modal-overlay">
+    <!-- <div v-if="showDeleteModal" class="modal-overlay">
       <div class="confirmation-modal">
         <h3>Confirm Deletion</h3>
         <p>Are you sure you want to delete this performance review?</p>
@@ -145,17 +145,16 @@
             Delete
           </button>
         </div>
-      </div>
+      </div> -->
     </div>
 
-    <div v-if="selectedEmployee">
+    <!-- <div v-if="selectedEmployee">
       <div class="employee-details">
         <p><strong>Name:</strong> {{ selectedEmployee.name }}</p>
         <p><strong>Department:</strong> {{ selectedEmployee.department }}</p>
-        <!-- Add more fields as needed -->
+        
       </div>
-    </div>
-  </div>
+    </div> -->
   <footer-comp />
 </template>
 
@@ -194,9 +193,9 @@ export default {
     const sortField = ref('reviewDate');
     const sortDirection = ref('desc');
     const showReviewModal = ref(false);
-    const showDeleteModal = ref(false);
+    // const showDeleteModal = ref(false);
     const editingReview = ref(null);
-    const reviewToDelete = ref(null);
+    // const reviewToDelete = ref(null);
 
     const form = ref({
       employeeId: '',
@@ -382,10 +381,10 @@ export default {
       await fetchReviews(); // Refresh list
     };
 
-    const confirmDelete = (id) => {
-      reviewToDelete.value = id;
-      showDeleteModal.value = true;
-    };
+    // const confirmDelete = (id) => {
+    //   reviewToDelete.value = id;
+    //   showDeleteModal.value = true;
+    // };
 
     const selectedEmployee = computed(() =>
       employees.value.find(emp => emp.id === Number(form.value.employeeId))
@@ -401,7 +400,7 @@ export default {
       departments,
       filteredReviews,
       showReviewModal,
-      showDeleteModal,
+      // showDeleteModal,
       editingReview,
       form,
       formatDate,
@@ -409,7 +408,7 @@ export default {
       openReviewModal,
       closeModal,
       submitReview,
-      confirmDelete,
+      // confirmDelete,
       deleteReview,
       selectedEmployee
     };

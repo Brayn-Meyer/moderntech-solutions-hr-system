@@ -3,11 +3,11 @@
         <h1 class="form-title">Add New Employee</h1>
         <div class="form-wrapper">
             <form @submit.prevent="add_employee" class="employee-form">
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="eID">Employee ID</label>
                     <input v-model="newEmployee.employeeId" id="eID" name="eID" placeholder="Enter employee ID"
                         type="number" class="form-input" required>
-                </div>
+                </div> -->
                 <div class="form-group">
                     <label for="eName">Full Name</label>
                     <input v-model="newEmployee.name" id="eName" name="eName" placeholder="Enter full name"
@@ -83,9 +83,9 @@ export default {
             
             try {
                 // Validate required fields
-                if (!this.newEmployee.employeeId || !this.newEmployee.name || 
-                    !this.newEmployee.position || !this.newEmployee.department || 
-                    !this.newEmployee.salary || !this.newEmployee.contact) {
+                if (!this.newEmployee.name || !this.newEmployee.position ||
+                    !this.newEmployee.department || !this.newEmployee.salary ||
+                    !this.newEmployee.contact) {
                     throw new Error("Please fill in all required fields");
                 }
                 // Send data to backend
