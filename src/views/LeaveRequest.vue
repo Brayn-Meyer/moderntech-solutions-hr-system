@@ -9,9 +9,14 @@
         />
         <addleaverequest-comp />
     </div>
-    <span>Pending Request : {{ $store.getters.pendingLeaveRequests }} | </span>
-    <span>Approved Request : {{ $store.getters.approvedLeaveRequests }} | </span>
-    <span>Denied Request : {{ $store.getters.deniedLeaveRequests }}</span>
+    <div class="compact-leave-card">
+      <div class="card-header">
+        <span class="badge">Pending Request : {{ $store.getters.pendingLeaveRequests }} </span>
+        <span class="badge">Approved Request : {{ $store.getters.approvedLeaveRequests }} </span>
+        <span class="badge">Denied Request : {{ $store.getters.deniedLeaveRequests }}</span>
+      </div>
+    </div>
+    
     <leaverequest-comp v-for="leave_request in filteredLeaveRequest" :key="leave_request.id" :info="leave_request" />
     <footer-comp />
 </template>
@@ -60,5 +65,33 @@ export default {
   border-radius: 6px;
   font-size: 1rem;
   color: #2f4156;
+}
+
+.badge {
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.compact-leave-card {
+  background: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(47, 65, 86, 0.1);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #E0E8EE;
+}
+
+.card-header {
+  padding: 14px 16px;
+  align-items: center;
+  cursor: pointer;
+  background: linear-gradient(to right, #F5EFEB, #FFFFFF);
+  border-bottom: 1px solid #D6E4F0;
+  transition: all 0.2s ease;
+  height: 30px;
 }
 </style>

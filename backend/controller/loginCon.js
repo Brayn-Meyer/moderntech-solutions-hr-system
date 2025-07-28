@@ -5,7 +5,7 @@ export const getUsersCon = async(req, res) => {
         res.json({ users: await getUsers() })
     } catch(error) {
         console.log(error)
-    }
+    } 
 }
 
 export const checkPasswordCon = async (req, res) => {

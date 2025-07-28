@@ -18,7 +18,7 @@ export default {
     color: white;
     padding: 20px 0;
     text-align: center;
-    position: sticky;
+    position: relative;
     bottom: 0;
     width: 100%;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);

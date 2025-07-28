@@ -1,29 +1,21 @@
 <template>
-    <navbar-comp/>
+    <navbar-comp />
     <div class="employee-container">
-        <h1>Employee List</h1>
+        <!-- <h1>Employee List</h1> -->
         <div class="top-bar">
+            <input v-model="searchQuery" type="text" placeholder="Search employee" class="search-input" />
             <button class="add-btn" @click="add_employee_button()">+ Add Employee</button>
         </div>
         <div>
-            <AddemployeeComp ref="add_employee"/>
+            <AddemployeeComp ref="add_employee" />
         </div>
         <div class="card-grid" ref="cards">
-            <EmployeeCard
-                v-for="emp in this.$store.state.employee_info"
-                :key="emp.id"
-                :employee="emp"
-                @view="openModal"
-                @delete="deleteEmployee"
-            />
+            <EmployeeCard v-for="emp in filteredEmployees" :key="emp.id" :employee="emp" @view="openModal"
+                @delete="deleteEmployee" />
         </div>
-        <EmployeeModal
-            v-if="selectedEmployee"
-            :employee="selectedEmployee"
-            @close="selectedEmployee = null"
-        />
+        <EmployeeModal v-if="selectedEmployee" :employee="selectedEmployee" @close="selectedEmployee = null" />
     </div>
-    <footer-comp/>
+    <footer-comp />
 </template>
 
 <script>
@@ -52,16 +44,15 @@ export default {
     },
     computed: {
         filteredEmployees() {
-            return this.employees.filter(emp => 
-                emp.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-            );
+            const query = this.searchQuery.toLowerCase();
+            return this.$store.state.employee_info.filter(employee => employee.name.toLowerCase().includes(query));
         },
         getEmployees() {
             return this.$store.state.employee_info
         }
     },
     methods: {
-        add_employee_button(){
+        add_employee_button() {
             this.$refs.add_employee.toggle_add_employee_comp()
         },
         deleteEmployee(employee) {
@@ -86,6 +77,16 @@ export default {
     padding: 3rem;
     min-height: calc(100vh - 120px);
     background-color: white;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 1rem;
+    border: 1px solid #c8d9e6;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #2f4156;
 }
 
 h1 {
@@ -133,15 +134,15 @@ h1 {
     .employee-container {
         padding: 1.5rem;
     }
-    
+
     .card-grid {
         grid-template-columns: 1fr;
     }
-    
+
     h1 {
         font-size: 2rem;
     }
-    
+
     .top-bar {
         justify-content: center;
     }

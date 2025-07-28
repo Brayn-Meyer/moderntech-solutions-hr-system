@@ -3,7 +3,7 @@ import { hash, compare } from 'bcrypt'
 
 export const getUsers = async () => {
     try {
-        let [row] = await pool.query("SELECT * FROM users")
+        let [row] = await pool.query("SELECT * FROM users") 
         return row
     } catch (error) {
         throw new Error('Database error: ' + err.message);

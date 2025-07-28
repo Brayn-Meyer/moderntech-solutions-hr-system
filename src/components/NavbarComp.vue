@@ -11,6 +11,7 @@
             <router-link to="/attendance" class="nav-link">Attendance</router-link>
             <router-link to="/leaverequest" class="nav-link">Leave Requests</router-link>
             <router-link to="/performancereview" class="nav-link">Performance Review</router-link>
+            <router-link to="/" class="nav-link">Log out</router-link>
         </div>
     </nav>
 </template>

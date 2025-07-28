@@ -4,13 +4,14 @@
             <div class="initials">{{ initials }}</div>
             <div class="main-info">
                 <h2>{{ employee.name }}</h2>
+                <br>
                 <p class="subtitle"><strong>Position:</strong> {{ employee.position }} <br> <strong>Department:</strong>
                     {{ employee.department }}</p>
             </div>
         </div>
         <div class="actions">
             <button class="view" @click="$emit('view', employee)">View</button>
-            <button class="edit">Edit</button>
+            <!-- <button class="edit">Edit</button> -->
             <button class="delete" @click="$emit('delete', employee)">Delete</button>
         </div>
     </div>
@@ -74,7 +75,7 @@ export default {
 }
 
 .initials {
-    background-color: rgb(208, 203, 203);
+    background-color: #0b2545;
     color: white;
     border-radius: 50%;
     width: 65px;

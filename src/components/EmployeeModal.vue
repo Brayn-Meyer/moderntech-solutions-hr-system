@@ -27,7 +27,7 @@
                     <span class="detail-value">{{ employee.contact }}</span>
                 </div>
             </div>
-            <button class="close-btn" @click="$emit('close')">Close</button>
+            <button class="close-btn" @click="$emit('close')">&times;</button>
         </div>
     </div>
 </template>
@@ -145,17 +145,20 @@ export default {
 }
 
 .close-btn {
-    margin-top: 2rem;
-    background-color: #0b2545;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    width: 100%;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(47, 65, 86, 0.1);
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #f5efeb;
+  background-color: #f1121d;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 1;
 }
 
 .close-btn:hover {
