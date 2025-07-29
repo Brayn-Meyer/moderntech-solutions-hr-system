@@ -1,10 +1,9 @@
 <template>
   <navbar-comp />
   <div class="performance-review-container">
-    <h1>Employee Performance Reviews</h1>
-
+    <!-- <h1>Employee Performance Reviews</h1> -->
     <div class="controls">
-      <div class="search-filter">
+      <div class="search-filter animate__animated animate__backInLeft">
         <input type="text" v-model="searchQuery" placeholder="Search employees..." class="search-input">
         <select v-model="selectedDepartment" class="department-select">
           <option value="">All Departments</option>
@@ -12,12 +11,12 @@
         </select>
       </div>
 
-      <button @click="openReviewModal(null)" class="add-review-btn">
+      <button @click="openReviewModal(null)" class="add-review-btn animate__animated animate__backInRight">
         + Add New Review
       </button>
     </div>
 
-    <div class="reviews-table">
+    <div class="reviews-table animate__animated animate__backInUp">
       <table>
         <thead>
           <tr>
@@ -133,7 +132,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <!-- <div v-if="showDeleteModal" class="modal-overlay">
+    <div v-if="showDeleteModal" class="modal-overlay">
       <div class="confirmation-modal">
         <h3>Confirm Deletion</h3>
         <p>Are you sure you want to delete this performance review?</p>
@@ -141,11 +140,11 @@
           <button @click="showDeleteModal = false" class="cancel-btn">
             Cancel
           </button>
-          <button @click="deleteReview" class="delete-btn">
+          <button @click="deleteReview(currentReviewId)" class="delete-btn">
             Delete
           </button>
         </div>
-      </div> -->
+      </div>
   </div>
 
   <!-- <div v-if="selectedEmployee">
@@ -155,6 +154,7 @@
         
       </div>
     </div> -->
+  </div>
   <footer-comp />
 </template>
 
@@ -168,6 +168,9 @@ export default {
   components: {
     NavbarComp,
     FooterComp
+  },
+  data(){
+    currentReviewId: 0
   },
   setup() {
     const store = useStore();
@@ -256,6 +259,11 @@ export default {
       } finally {
         loading.value = false;
       }
+    }
+
+    async function showDeleteModalFunc(id) {
+      this.showDeleteModal = true;
+      currentReviewId = id
     }
 
     onMounted(async () => {
@@ -401,7 +409,7 @@ export default {
   /* Center horizontally */
   padding: 30px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5efeb;
+  /* background-color: #f5efeb; */
   display: flex;
   flex-direction: column;
   align-items: center;

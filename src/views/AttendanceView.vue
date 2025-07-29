@@ -1,12 +1,12 @@
 <template>
     <navbar-comp />
 
-    <div class="attendance-container">
+    <div class="attendance-container animate__animated animate__fadeIn">
         <div class="controls">
-            <h2><i class="fas fa-clipboard-check"></i> Employee Attendance</h2>
+            <h2 class="animate__animated animate__backInLeft"><i class="fas fa-clipboard-check"></i> Employee Attendance</h2>
         </div>
 
-        <div class="master-date-control">
+        <div class="master-date-control animate__animated animate__backInLeft">
 
             <span class="master-date-label">Search by Name :</span>
             <div class="search-container">
@@ -14,11 +14,11 @@
             </div>
             <br>
             <span class="master-date-label">Search by Date :</span>
-            <input type="date" v-model="dateQuery" class="date-input" @change="updateAllDates">
+            <input type="date" v-model="dateQuery" class="date-input">
         </div>
 
         <table>
-            <thead>
+            <thead class="animate__animated animate__backInDown">
                 <tr>
                     <th></th>
                     <th>Employee</th>
@@ -27,7 +27,7 @@
                     <th>Status</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="animate__animated animate__backInUp">
                 <tr v-for="(employee, index) in filteredList" :key="index">
                     <td>{{ index + 1 }}</td>
                     <td class="employee-cell">
@@ -172,9 +172,9 @@ export default {
     margin: 2rem auto;
     background: linear-gradient(to bottom, #ffffff 0%, #f5efeb 100%);
     border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(47, 65, 86, 0.12);
+    /* box-shadow: 0 6px 18px rgba(47, 65, 86, 0.12); */
     padding: 2rem;
-    border: 1px solid #c8d9e6;
+    /* border: 1px solid #c8d9e6; */
 }
 
 h2 {

@@ -3,11 +3,11 @@
     <navbar-comp class="navbar" />
 
     <main class="dashboard-content">
-      <h2 class="dashboard-title">Company Dashboard</h2>
+      <!-- <h2 class="dashboard-title animate__animated animate__fadeInDown">Company Dashboard</h2> -->
 
       <div class="stats-grid">
         <!-- Employee Count Card -->
-        <div class="stat-card employee-count">
+        <div class="stat-card employee-count animate__animated animate__backInLeft">
           <div class="stat-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Combined Salary Card -->
-        <div class="stat-card combined-salary">
+        <div class="stat-card combined-salary animate__animated animate__backInLeft">
           <div class="stat-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Average Salary Card -->
-        <div class="stat-card average-salary">
+        <div class="stat-card average-salary animate__animated animate__backInRight">
           <div class="stat-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -50,7 +50,7 @@
         </div>
 
         <!-- Leave Requests Card -->
-        <div class="stat-card leave-requests">
+        <div class="stat-card leave-requests animate__animated animate__backInRight">
           <div class="stat-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -78,7 +78,7 @@
         </div>
       </div>
     </main>
-    <main class="dashboard-content">
+    <main class="dashboard-content animate__animated animate__backInUp">
       <div class="charts-grid" style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;">
         <div style="flex: 1; min-width: 350px;">
           <LineChart :chartData="attendanceChartData" :chartOptions="attendanceChartOptions" />

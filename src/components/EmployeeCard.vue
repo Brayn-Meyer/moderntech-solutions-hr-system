@@ -1,5 +1,5 @@
 <template>
-    <div class="employee-card">
+    <div class="employee-card animate__animated animate__backInUp">
         <div class="card-header">
             <div class="initials">{{ initials }}</div>
             <div class="main-info">

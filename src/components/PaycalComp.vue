@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Trigger Button -->
-        <button class="open-btn" @click="showModal = true">Open Pay Calculator</button>
+        <button class="open-btn animate__animated animate__backInLeft" @click="showModal = true">Open Pay Calculator</button>
 
         <!-- Modal Overlay -->
         <div v-if="showModal" class="modal-overlay">

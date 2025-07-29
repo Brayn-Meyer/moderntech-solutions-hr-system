@@ -3,8 +3,8 @@
     <div class="employee-container">
         <!-- <h1>Employee List</h1> -->
         <div class="top-bar">
-            <input v-model="searchQuery" type="text" placeholder="Search employee" class="search-input" />
-            <button class="add-btn" @click="add_employee_button()">+ Add Employee</button>
+            <input v-model="searchQuery" type="text" placeholder="Search employee" class="search-input animate__animated animate__backInLeft" />
+            <button class="add-btn animate__animated animate__backInRight" @click="add_employee_button()">+ Add Employee</button>
         </div>
         <div>
             <AddemployeeComp ref="add_employee" />

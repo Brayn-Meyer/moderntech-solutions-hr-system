@@ -1,6 +1,6 @@
 <template>
     <footer class="footer">
-        <div class="footer-content">
+        <div class="footer-content animate__animated animate__fadeInUp">
             <b>ModernTech Solutions © 2025</b>
         </div>
     </footer>

@@ -1,6 +1,6 @@
 <template>
     <navbar-comp />
-    <div class="top-bar">
+    <div class="top-bar animate__animated animate__backInLeft">
         <input
             v-model="searchQuery"
             type="text"
@@ -9,15 +9,15 @@
         />
         <addleaverequest-comp />
     </div>
-    <div class="compact-leave-card">
+    <div class="compact-leave-card animate__animated animate__backInUp">
       <div class="card-header">
         <span class="badge">Pending Request : {{ $store.getters.pendingLeaveRequests }} </span>
         <span class="badge">Approved Request : {{ $store.getters.approvedLeaveRequests }} </span>
         <span class="badge">Denied Request : {{ $store.getters.deniedLeaveRequests }}</span>
       </div>
+      <leaverequest-comp v-for="leave_request in filteredLeaveRequest" :key="leave_request.id" :info="leave_request" />
     </div>
     
-    <leaverequest-comp v-for="leave_request in filteredLeaveRequest" :key="leave_request.id" :info="leave_request" />
     <footer-comp />
 </template>
 <script>

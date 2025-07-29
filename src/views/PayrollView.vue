@@ -4,14 +4,14 @@
         <div class="sections-wrapper">
             <!-- Calculator Section -->
             <div class="calculator-section">
-                <h2>Payroll Calculator</h2>
+                <h2 class="animate__animated animate__backInLeft">Payroll Calculator</h2>
                 <div class="calculator-border">
                     <paycal-comp />
                 </div>
             </div>
 
             <!-- Trigger Button for Employee Management Modal -->
-            <div class="management-section">
+            <div class="management-section animate__animated animate__backInRight">
                 <h2>Employee Management</h2>
                 <button class="action-btn" @click="showEmployeeModal = true">Open Employee Management</button>
             </div>
@@ -28,9 +28,10 @@
                             <h3>Select Employee</h3>
                             <select required v-model="modifiedPayroll.name" class="search-input">
                                 <option disabled value="">Select an employee</option>
-                                <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId" :value="employee.name">
+                                <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId"
+                                    :value="employee.name">
                                     {{ employee.name
-                                     }}
+                                    }}
                                 </option>
                             </select>
                         </div>
@@ -42,7 +43,8 @@
 
                         <div class="management-option">
                             <h3>Leave Days Taken</h3>
-                            <input required type="number" class="employee-select" v-model="modifiedPayroll.leaveDeductions">
+                            <input required type="number" class="employee-select"
+                                v-model="modifiedPayroll.leaveDeductions">
                             <button class="action-btn" @click="updatePayroll
                             ">Edit Payroll</button>
                         </div>
@@ -51,49 +53,49 @@
             </div>
         </div>
 
-    <!-- Payroll Table Section -->
-    <div class="payroll-section">
-        <h1>Employee Payrolls</h1>
-        <div class="table-controls">
-            <button class="action-btn export-btn" @click="exportToCSV">Export to CSV</button>
-            <input type="text" placeholder="Filter payrolls..." class="search-input" v-model="payrollFilter"
-                @input="filterPayrolls">
+        <!-- Payroll Table Section -->
+        <div class="payroll-section animate__animated animate__backInUp">
+            <h1>Employee Payrolls</h1>
+            <div class="table-controls">
+                <button class="action-btn export-btn" @click="exportToCSV">Export to CSV</button>
+                <input type="text" placeholder="Filter payrolls..." class="search-input" v-model="payrollFilter"
+                    @input="filterPayrolls">
+            </div>
+            <div class="table-scroll">
+                <table class="payroll-table">
+                    <thead>
+                        <tr>
+                            <th @click="sortPayrolls('name')">Name</th>
+                            <th @click="sortPayrolls('position')">Position</th>
+                            <th @click="sortPayrolls('hourlyRate')">Hourly Rate</th>
+                            <th @click="sortPayrolls('hoursWorked')">Hours Worked</th>
+                            <th @click="sortPayrolls('leaveDeductions')">Leave Deductions</th>
+                            <th @click="sortPayrolls('finalSalary')">Final Salary</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(employee, index) in filteredPayrollData" :key="index">
+                            <td>{{ employee.name }}</td>
+                            <td>{{ employee.position }}</td>
+                            <td>R{{ employee.hourlyRate }}</td>
+                            <td>{{ employee.hoursWorked }}</td>
+                            <td>R{{ employee.leaveDeductions }}</td>
+                            <td>R{{ employee.finalSalary }}</td>
+                            <td>
+                                <button class="table-btn view-btn" @click="viewPayslip(employee)">View Payslip</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" v-if="totalPages > 1">
+                <button v-for="page in totalPages" :key="page" @click="currentPage = page"
+                    :class="{ active: currentPage === page }">
+                    {{ page }}
+                </button>
+            </div>
         </div>
-        <div class="table-scroll">
-            <table class="payroll-table">
-                <thead>
-                    <tr>
-                        <th @click="sortPayrolls('name')">Name</th>
-                        <th @click="sortPayrolls('position')">Position</th>
-                        <th @click="sortPayrolls('hourlyRate')">Hourly Rate</th>
-                        <th @click="sortPayrolls('hoursWorked')">Hours Worked</th>
-                        <th @click="sortPayrolls('leaveDeductions')">Leave Deductions</th>
-                        <th @click="sortPayrolls('finalSalary')">Final Salary</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(employee, index) in filteredPayrollData" :key="index">
-                        <td>{{ employee.name }}</td>
-                        <td>{{ employee.position }}</td>
-                        <td>R{{ employee.hourlyRate }}</td>
-                        <td>{{ employee.hoursWorked }}</td>
-                        <td>R{{ employee.leaveDeductions }}</td>
-                        <td>R{{ employee.finalSalary }}</td>
-                        <td>
-                            <button class="table-btn view-btn" @click="viewPayslip(employee)">View Payslip</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination" v-if="totalPages > 1">
-            <button v-for="page in totalPages" :key="page" @click="currentPage = page"
-                :class="{ active: currentPage === page }">
-                {{ page }}
-            </button>
-        </div>
-    </div>
     </div>
 
     <!-- Payslip Modal -->
@@ -192,7 +194,7 @@ export default {
                 hoursWorked: '',
                 leaveDeductions: ''
             }
-                
+
         }
     },
     computed: {
@@ -341,7 +343,6 @@ export default {
 </script>
 
 <style scoped>
-
 .dashboard-container {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 20px;
@@ -383,7 +384,7 @@ h2 {
 }
 
 .management-option {
-   border: 1px solid #e2e8f0;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 20px;
     background: linear-gradient(to bottom, #ffffff, #efe6e0);
@@ -439,16 +440,16 @@ h2 {
 }
 
 .close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: crimson;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 0.5rem 0.8rem;
-  cursor: pointer;
-  font-size: 1rem;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: crimson;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    font-size: 1rem;
 }
 
 .payroll-section {
@@ -520,13 +521,13 @@ h2 {
 }
 
 .export-btn {
-   background-color: #0b2545;
+    background-color: #0b2545;
     width: auto;
     padding: 8px 16px;
 }
 
 .export-btn:hover {
-   background: linear-gradient(to right, #0b2545, #8da9c4);
+    background: linear-gradient(to right, #0b2545, #8da9c4);
 }
 
 /* Button Styles */
@@ -542,7 +543,7 @@ h2 {
 }
 
 .view-btn {
-   background-color: #0b2545;
+    background-color: #0b2545;
     color: white;
 }
 
@@ -572,7 +573,7 @@ h2 {
 }
 
 .pagination button.active {
-  background-color: #0b2545;
+    background-color: #0b2545;
     border-color: #567c8d;
 }
 
