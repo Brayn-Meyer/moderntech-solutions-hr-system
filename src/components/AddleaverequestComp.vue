@@ -1,79 +1,56 @@
 <template>
-  <div>
+  <div class="animate__animated animate__backInRight">
     <button class="open-form-button" @click="showForm = true">
       <i class="fas fa-calendar-plus"></i> Request Leave
     </button>
+  </div>
+  <!-- Modal -->
+  <div v-if="showForm" class="modal-overlay">
+    <div class="modal-content leave-form-container">
+      <!-- Close Button -->
+      <button class="close-button" @click="showForm = false">
+        &times;
+      </button>
 
-    <!-- Modal -->
-    <div v-if="showForm" class="modal-overlay">
-      <div class="modal-content leave-form-container">
-        <!-- Close Button -->
-        <button class="close-button" @click="showForm = false">
-          &times;
-        </button>
+      <!-- Form Header -->
+      <div class="form-header">
+        <h2 class="title"> New Leave Request</h2>
+        <p class="form-subtitle">Submit your leave application</p>
+      </div>
 
-        <!-- Form Header -->
-        <div class="form-header">
-          <h2 class="title"> New Leave Request</h2>
-          <p class="form-subtitle">Submit your leave application</p>
+      <!-- Leave Form -->
+      <form @submit.prevent="submitLeaveRequest" class="leave-form">
+        <div class="form-group">
+          <label for="employeeName">Employee Name</label>
+          <select id="employeeName" v-model="newRequest.name" required class="form-input">
+            <option disabled value="">Select an employee</option>
+            <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId"
+              :value="employee.name">
+              {{ employee.name }}
+            </option>
+          </select>
         </div>
 
-        <!-- Leave Form -->
-        <form @submit.prevent="submitLeaveRequest" class="leave-form">
+        <div class="form-row">
           <div class="form-group">
-            <label for="employeeName">Employee Name</label>
-            <select id="employeeName" v-model="newRequest.name" required class="form-input">
-              <option disabled value="">Select an employee</option>
-              <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId" :value="employee.name">
-                {{ employee.name }}
-              </option>
-            </select>
+            <label for="leaveDate">Leave Date</label>
+            <input id="leaveDate" v-model="newRequest.date" type="date" required class="form-input" />
           </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="leaveDate">Leave Date</label>
-              <input
-                id="leaveDate"
-                v-model="newRequest.date"
-                type="date"
-                required
-                class="form-input"
-              />
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="leaveReason">Reason for Leave</label>
+          <textarea id="leaveReason" v-model="newRequest.reason" placeholder="Briefly explain the reason for leave"
+            required class="form-textarea" rows="4"></textarea>
+        </div>
 
-          <!-- <div class="form-row">
-            <div class="form-group">
-              <label for="leaveDepartment">Department</label>
-              <select id="leaveDepartment" v-model="newRequest.department" required class="form-input">
-                <option disabled value="">Select department</option>
-                <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId" :value="employee.department">
-                  {{ employee.department }}
-                </option>
-              </select>
-            </div>
-          </div> -->
-
-          <div class="form-group">
-            <label for="leaveReason">Reason for Leave</label>
-            <textarea
-              id="leaveReason"
-              v-model="newRequest.reason"
-              placeholder="Briefly explain the reason for leave"
-              required
-              class="form-textarea"
-              rows="4"
-            ></textarea>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="submit-button">Submit Request</button>
-          </div>
-        </form>
-      </div>
+        <div class="form-actions">
+          <button type="submit" class="submit-button">Submit Request</button>
+        </div>
+      </form>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -97,32 +74,11 @@ export default {
   },
   methods: {
     submitLeaveRequest() {
-      // if (!this.validateForm()) return;
-
       this.$store.dispatch("add_leave_request", this.newRequest);
       this.resetForm();
       this.showSuccessNotification();
       this.showForm = false;
     },
-    // validateForm() {
-    //   if (!this.newRequest.name.trim()) {
-    //     this.showError("Please enter employee name");
-    //     return false;
-    //   }
-    //   if (!this.newRequest.date) {
-    //     this.showError("Please select a leave date");
-    //     return false;
-    //   }
-    //   if (!this.newRequest.department.trim()) {
-    //     this.showError("Please provide a department");
-    //     return false;
-    //   }
-    //   if (!this.newRequest.reason.trim()) {
-    //     this.showError("Please provide a reason for leave");
-    //     return false;
-    //   }
-    //   return true;
-    // },
     showError(message) {
       alert(message);
     },
@@ -146,7 +102,6 @@ export default {
 </script>
 
 <style scoped>
-
 .open-form-button {
   background-color: #0b2545;
   color: #f5efeb;
@@ -236,6 +191,7 @@ export default {
     opacity: 0;
     transform: scale(0.92);
   }
+
   to {
     opacity: 1;
     transform: scale(1);

@@ -1,13 +1,8 @@
 <template>
     <div class="employee-form-container" ref="add_employee">
-        <h1 class="form-title">Add New Employee</h1>
         <div class="form-wrapper">
+            <h1 class="form-title">Add New Employee</h1>
             <form @submit.prevent="add_employee" class="employee-form">
-                <!-- <div class="form-group">
-                    <label for="eID">Employee ID</label>
-                    <input v-model="newEmployee.employeeId" id="eID" name="eID" placeholder="Enter employee ID"
-                        type="number" class="form-input" required>
-                </div> -->
                 <div class="form-group">
                     <label for="eName">Full Name</label>
                     <input v-model="newEmployee.name" id="eName" name="eName" placeholder="Enter full name"
@@ -59,7 +54,6 @@
     </div>
 </template>
 <script>
-import axios from 'axios';
 export default {
     data() {
         return {
@@ -75,6 +69,9 @@ export default {
             errorMessage: "",
             successMessage: ""
         }
+    },
+    mounted() {
+        this.toggle_add_employee_comp()
     },
     methods: {
         async add_employee() {
@@ -123,7 +120,7 @@ export default {
         },
         toggle_add_employee_comp() {
             this.visible = !this.visible;
-            this.$refs.add_employee.style.display = this.visible ? 'block' : 'none';
+            this.$refs.add_employee.style.display = this.visible ? 'none' : 'block';
         }
     }
 }
@@ -131,10 +128,22 @@ export default {
 <style>
 .employee-form-container {
     display: none;
-    max-width: 800px;
+    width: 100%;
+    height: 100%;
     margin: 0 auto;
     padding: 2rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(47, 65, 86, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
 }
 .form-title {
     color: #2C3E50;
@@ -144,9 +153,11 @@ export default {
     font-size: 2rem;
 }
 .form-wrapper {
+    max-width: 800px;
     background-color: #FFFFFF;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
     padding: 2rem;
 }
 .employee-form {

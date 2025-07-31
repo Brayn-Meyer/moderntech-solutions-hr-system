@@ -49,7 +49,7 @@
               <button @click="openReviewModal(review)" class="action-btn edit-btn">
                 Edit
               </button>
-              <button @click="deleteReview(review.id)" class="action-btn delete-btn">
+              <button @click="confirmDelete(review.id)" class="action-btn delete-btn">
                 Delete
               </button>
             </td>
@@ -145,9 +145,9 @@
           </button>
         </div>
       </div>
-  </div>
+    </div>
 
-  <!-- <div v-if="selectedEmployee">
+    <!-- <div v-if="selectedEmployee">
       <div class="employee-details">
         <p><strong>Name:</strong> {{ selectedEmployee.name }}</p>
         <p><strong>Department:</strong> {{ selectedEmployee.department }}</p>
@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import NavbarComp from '@/components/NavbarComp.vue';
 import FooterComp from '@/components/FooterComp.vue';
 import { useStore } from 'vuex';
@@ -168,9 +168,6 @@ export default {
   components: {
     NavbarComp,
     FooterComp
-  },
-  data(){
-    currentReviewId: 0
   },
   setup() {
     const store = useStore();
@@ -190,14 +187,15 @@ export default {
     // State
     const loading = ref(false);
     const error = ref('');
-
-    // Form and UI state
     const searchQuery = ref('');
     const selectedDepartment = ref('');
     const sortField = ref('reviewDate');
     const sortDirection = ref('desc');
+
     const showReviewModal = ref(false);
     const editingReview = ref(null);
+    const showDeleteModal = ref(false);
+    const currentReviewId = ref(null);
 
     const form = ref({
       employeeId: '',
@@ -209,8 +207,7 @@ export default {
       status: 'Draft'
     });
 
-    // Fetch all reviews
-    async function fetchReviews() {
+    const fetchReviews = async () => {
       loading.value = true;
       error.value = '';
       try {
@@ -220,10 +217,9 @@ export default {
       } finally {
         loading.value = false;
       }
-    }
+    };
 
-    // Create a review
-    async function createReview(reviewData) {
+    const createReview = async (reviewData) => {
       loading.value = true;
       error.value = '';
       try {
@@ -233,10 +229,9 @@ export default {
       } finally {
         loading.value = false;
       }
-    }
+    };
 
-    // Update a review
-    async function updateReview(id, reviewData) {
+    const updateReview = async (id, reviewData) => {
       loading.value = true;
       error.value = '';
       try {
@@ -246,36 +241,27 @@ export default {
       } finally {
         loading.value = false;
       }
-    }
+    };
 
-    // Delete a review
-    async function deleteReview(id) {
+    const deleteReview = async (id) => {
       loading.value = true;
       error.value = '';
       try {
-        await store.dispatch("remove_performance_review", id); // fixed: should pass `id`, not `reviewData`
+        await store.dispatch("remove_performance_review", id);
+        showDeleteModal.value = false;
+        currentReviewId.value = null;
+        await fetchReviews();
       } catch (err) {
         error.value = 'Failed to delete review';
       } finally {
         loading.value = false;
       }
-    }
+    };
 
-    async function showDeleteModalFunc(id) {
-      this.showDeleteModal = true;
-      currentReviewId = id
-    }
-
-    onMounted(async () => {
-      if (!store.state.employee_info || store.state.employee_info.length === 0) {
-        await store.dispatch('fetch_employee_info');
-      }
-      await fetchReviews();
-
-      if (!Array.isArray(store.state.performance_reviews)) {
-        await store.dispatch("fetch_performance_reviews_info");
-      }
-    });
+    const confirmDelete = (id) => {
+      currentReviewId.value = id;
+      showDeleteModal.value = true;
+    };
 
     const departments = computed(() => {
       const depts = new Set();
@@ -378,6 +364,17 @@ export default {
       employees.value.find(emp => emp.id === Number(form.value.employeeId))
     );
 
+    onMounted(async () => {
+      if (!store.state.employee_info || store.state.employee_info.length === 0) {
+        await store.dispatch('fetch_employee_info');
+      }
+      await fetchReviews();
+
+      if (!Array.isArray(store.state.performance_reviews)) {
+        await store.dispatch("fetch_performance_reviews_info");
+      }
+    });
+
     return {
       employees,
       reviews,
@@ -395,8 +392,11 @@ export default {
       openReviewModal,
       closeModal,
       submitReview,
-      deleteReview,
-      selectedEmployee
+      selectedEmployee,
+      showDeleteModal,
+      currentReviewId,
+      confirmDelete,
+      deleteReview
     };
   }
 };
@@ -404,6 +404,7 @@ export default {
 
 <style scoped>
 .performance-review-container {
+  min-height: 100vh;
   max-width: 1200px;
   margin: 30px auto;
   /* Center horizontally */

@@ -26,7 +26,7 @@
                     <div class="management-border">
                         <div class="management-option">
                             <h3>Select Employee</h3>
-                            <select required v-model="modifiedPayroll.name" class="search-input">
+                            <select required v-model="modifiedPayroll.name" class="employee-select">
                                 <option disabled value="">Select an employee</option>
                                 <option v-for="employee in this.$store.state.employee_info" :key="employee.employeeId"
                                     :value="employee.name">
@@ -34,19 +34,18 @@
                                     }}
                                 </option>
                             </select>
-                        </div>
 
-                        <div class="management-option">
                             <h3>Hours Worked</h3>
                             <input required type="number" class="employee-select" v-model="modifiedPayroll.hoursWorked">
-                        </div>
 
-                        <div class="management-option">
                             <h3>Leave Days Taken</h3>
                             <input required type="number" class="employee-select"
                                 v-model="modifiedPayroll.leaveDeductions">
-                            <button class="action-btn" @click="updatePayroll
-                            ">Edit Payroll</button>
+
+                            <h3>Final Salary (After Taxes)</h3>
+                            <input required type="number" class="employee-select"
+                                v-model="modifiedPayroll.finalSalary">
+                            <button class="action-btn" @click="updatePayroll">Edit Payroll</button>
                         </div>
                     </div>
                 </div>
@@ -192,7 +191,8 @@ export default {
             modifiedPayroll: {
                 name: '',
                 hoursWorked: '',
-                leaveDeductions: ''
+                leaveDeductions: '',
+                finalSalary: ''
             }
 
         }
@@ -275,10 +275,8 @@ export default {
         },
         updatePayroll() {
             this.$store.dispatch("edit_payroll", this.modifiedPayroll)
-            setTimeout(() => {
-                this.showEmployeeModal = false
-                this.$store.dispatch("fetch_payroll_info")
-            }, 2000);
+            this.showEmployeeModal = false
+            this.$store.dispatch("fetch_payroll_info")
         },
         calculateSalary(employee) {
             return (employee.hourlyRate * employee.hoursWorked) - employee.leaveDeductions;
@@ -344,11 +342,14 @@ export default {
 
 <style scoped>
 .dashboard-container {
+    min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 20px;
     max-width: 1200px;
-    margin: 20px;
+    margin: 20px auto;
     background-color: white;
+    flex-direction: column;
+    align-items: center;
 }
 
 .sections-wrapper {
@@ -405,7 +406,7 @@ h2 {
 
 .search-input,
 .employee-select {
-    width: 100%;
+    width: 90%;
     padding: 10px 12px;
     margin-bottom: 12px;
     border: 1px solid #cbd5e1;

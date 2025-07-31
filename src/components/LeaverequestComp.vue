@@ -1,5 +1,5 @@
 <template>
-  <div class="compact-leave-card">
+  <div class="compact-leave-card animate__animated animate__backInUp">
     <div class="card-header">
       <div class="employee-info">
         <div class="avatar">{{ getInitials(info.name) }}</div>
@@ -13,21 +13,55 @@
         <span class="badge">{{ info.reason }}</span>
         <span class="badge">{{ info.status }}</span>
         <span v-if="this.info.status == 'Pending'">
-          <button @click="editLeaveRequest(info.id, 'Approve')" class="approve-btn">Approve</button>
+          <button @click="editLeaveRequest(info.id, 'Approved')" class="approve-btn">Approve</button>
           <button @click="editLeaveRequest(info.id, 'Denied')" class="deny-btn">Deny</button>
         </span>
         <span>
-          <button @click="removeRequest(info.id)" class="remove-btn">Remove</button>
+          <button @click="showDeleteModal = true" class="remove-btn">Remove</button>
         </span>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Delete Confirmation Modal -->
+  <div v-if="showDeleteModal" class="modal-overlay">
+    <div class="confirmation-modal">
+      <h3>Confirm Deletion</h3>
+      <p>Are you sure you want to delete this leave request?</p>
+      <div class="modal-actions">
+        <button @click="showDeleteModal = false" class="cancel-btn">
+          Cancel
+        </button>
+        <button @click="deleteEmployee(info.id)" class="delete-btn">
+          Delete
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useStore } from 'vuex';
+
 export default {
   name: 'CompactLeaveCard',
   props: ['info'],
+  setup() {
+    const showDeleteModal = ref(false);
+    const store = useStore();
+
+    const deleteEmployee = (id) => {
+      store.dispatch('remove_leave_request', id);
+      showDeleteModal.value = false;
+    };
+
+    return {
+      showDeleteModal,
+      deleteEmployee
+    };
+  },
   methods: {
     getInitials(name) {
       if (!name) return '';
@@ -38,14 +72,12 @@ export default {
       return new Date(dateStr).toLocaleDateString('en-GB', options);
     },
     async editLeaveRequest(id, newStatus) {
-      this.$store.dispatch(`edit_leave_request`, { id: id, status: newStatus })
-    },
-    async removeRequest(id) {
-      this.$store.dispatch(`remove_leave_request`,  id)
+      this.$store.dispatch('edit_leave_request', { id, status: newStatus });
     }
   }
 };
 </script>
+
 <style scoped>
 .compact-leave-card {
   background: #FFFFFF;
@@ -332,6 +364,91 @@ export default {
   }
 }
 
-/* Font Awesome Icons
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'); */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(47, 65, 86, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.confirmation-modal {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 4px 25px rgba(47, 65, 86, 0.2);
+    border: 1px solid #d6e4f0;
+}
+
+.confirmation-modal h3 {
+    margin-top: 0;
+    font-size: 1.3rem;
+    color: #2f4156;
+    margin-bottom: 15px;
+}
+
+.confirmation-modal p {
+    color: #567c8d;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.cancel-btn {
+    background-color: #0b2545;
+    color: white;
+    border: 1px solid #d6e4f0;
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #f5f9ff;
+    color: #0b2545;
+    border-color: #8da9c4;
+}
+
+.delete-btn {
+    background-color: #b82323;
+    color: white;
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: linear-gradient(135deg, #fa5252, #ff6b6b);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .cancel-btn,
+    .delete-btn {
+        width: 100%;
+    }
+}
 </style>

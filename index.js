@@ -2,7 +2,7 @@ import express from 'express'
 import { config } from 'dotenv'
 import cors from 'cors'
 
-import { getEmployeeCon, addEmployeeCon, removeEmployeeCon } from './controller/employeeCon.js'
+import { getEmployeeCon, addEmployeeCon, editEmployeeCon, removeEmployeeCon } from './controller/employeeCon.js'
 
 import { getPayrollCon, editPayrollCon } from './controller/payrollCon.js'
 
@@ -17,13 +17,14 @@ import { getUsersCon, checkPasswordCon, addUsersCon } from './controller/loginCo
 config()
 
 const app = express()
-let PORT = process.env.PORT
+let PORT = process.env.VITE_PORT
 
 app.use(express.json())
 app.use(cors())
 
 app.get("/employees", getEmployeeCon)
 app.post('/employees', addEmployeeCon)
+app.patch('/employees', editEmployeeCon)
 app.delete("/employees/:id", removeEmployeeCon)
 
 app.get("/payrolls", getPayrollCon)
@@ -33,8 +34,8 @@ app.get("/attendance", getAttendanceCon)
 
 app.get("/leaverequest", getLeaveRequestCon)
 app.post("/leaverequest", addLeaveRequestCon)
-app.delete("/leaverequest/:id", removeLeaveRequestCon)
 app.patch('/leaverequest', editLeaveRequestCon)
+app.delete("/leaverequest/:id", removeLeaveRequestCon)
 
 app.get('/performancereview', getPerformanceReviewsCon)
 app.get('/performancereview/:id', getSinglePerformanceReviewsCon)

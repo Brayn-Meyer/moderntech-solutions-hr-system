@@ -6,14 +6,14 @@
             <input v-model="searchQuery" type="text" placeholder="Search employee" class="search-input animate__animated animate__backInLeft" />
             <button class="add-btn animate__animated animate__backInRight" @click="add_employee_button()">+ Add Employee</button>
         </div>
-        <div>
-            <AddemployeeComp ref="add_employee" />
-        </div>
         <div class="card-grid" ref="cards">
             <EmployeeCard v-for="emp in filteredEmployees" :key="emp.id" :employee="emp" @view="openModal"
                 @delete="deleteEmployee" />
         </div>
         <EmployeeModal v-if="selectedEmployee" :employee="selectedEmployee" @close="selectedEmployee = null" />
+    </div>
+    <div>
+        <AddemployeeComp ref="add_employee" />
     </div>
     <footer-comp />
 </template>
@@ -36,7 +36,7 @@ export default {
     },
     data() {
         return {
-            add_employee_cliked: false,
+            add_employee_cliked: true,
             employees: employeeInformation,
             selectedEmployee: null,
             searchQuery: ''
@@ -72,6 +72,7 @@ export default {
 
 <style scoped>
 .employee-container {
+    min-height: 100vh;
     max-width: 1500px;
     margin: 0 auto;
     padding: 3rem;

@@ -1,23 +1,24 @@
 <template>
     <navbar-comp />
-    <div class="top-bar animate__animated animate__backInLeft">
+    <div min-height="100vh">
+    <div class="top-bar">
         <input
             v-model="searchQuery"
             type="text"
             placeholder="Search employee or leave"
-            class="search-input"
+            class="search-input animate__animated animate__backInLeft"
         />
         <addleaverequest-comp />
     </div>
     <div class="compact-leave-card animate__animated animate__backInUp">
       <div class="card-header">
-        <span class="badge">Pending Request : {{ $store.getters.pendingLeaveRequests }} </span>
-        <span class="badge">Approved Request : {{ $store.getters.approvedLeaveRequests }} </span>
-        <span class="badge">Denied Request : {{ $store.getters.deniedLeaveRequests }}</span>
+        <span class="badge">Pending : {{ $store.getters.pendingLeaveRequests }} </span>
+        <span class="badge">Approved : {{ $store.getters.approvedLeaveRequests }} </span>
+        <span class="badge">Denied : {{ $store.getters.deniedLeaveRequests }}</span>
       </div>
-      <leaverequest-comp v-for="leave_request in filteredLeaveRequest" :key="leave_request.id" :info="leave_request" />
     </div>
-    
+    <leaverequest-comp v-for="leave_request in filteredLeaveRequest" :key="leave_request.id" :info="leave_request" />
+    </div>
     <footer-comp />
 </template>
 <script>
@@ -77,12 +78,12 @@ export default {
 
 .compact-leave-card {
   background: #FFFFFF;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   box-shadow: 0 2px 10px rgba(47, 65, 86, 0.1);
   margin-bottom: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
-  border: 1px solid #E0E8EE;
+  /* border: 1px solid #E0E8EE; */
 }
 
 .card-header {
@@ -90,7 +91,7 @@ export default {
   align-items: center;
   cursor: pointer;
   background: linear-gradient(to right, #F5EFEB, #FFFFFF);
-  border-bottom: 1px solid #D6E4F0;
+  border: 1px solid #D6E4F0;
   transition: all 0.2s ease;
   height: 30px;
 }

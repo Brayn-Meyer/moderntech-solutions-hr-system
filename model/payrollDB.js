@@ -9,7 +9,7 @@ export const getPayrolls = async() => {
     }
 }
 
-export const editPayroll = async(name, hoursWorked, leaveDeductions) => {
+export const editPayroll = async(name, hoursWorked, leaveDeductions, finalSalary) => {
     try{
         const [rows] = await pool.query('SELECT employeeId FROM employeeinformation WHERE name = ?',
         [name]);
@@ -20,8 +20,8 @@ export const editPayroll = async(name, hoursWorked, leaveDeductions) => {
 
         const employeeId = rows[0].employeeId;
 
-        await pool.query(`UPDATE payrolldata SET hoursWorked = ?, leaveDeductions = ? WHERE employeeId = ?;`,
-        [hoursWorked, leaveDeductions, employeeId])
+        await pool.query(`UPDATE payrolldata SET hoursWorked = ?, leaveDeductions = ?, finalSalary = ? WHERE employeeId = ?;`,
+        [hoursWorked, leaveDeductions, finalSalary, employeeId])
     } catch(error) {
         return error
     }
