@@ -46,9 +46,9 @@
               </span>
             </td>
             <td>
-              <button @click="openReviewModal(review)" class="action-btn edit-btn">
+              <!-- <button @click="openReviewModal(review)" class="action-btn edit-btn">
                 Edit
-              </button>
+              </button> -->
               <button @click="confirmDelete(review.id)" class="action-btn delete-btn">
                 Delete
               </button>

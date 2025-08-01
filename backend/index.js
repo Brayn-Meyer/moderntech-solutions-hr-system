@@ -40,7 +40,7 @@ app.delete("/leaverequest/:id", removeLeaveRequestCon)
 app.get('/performancereview', getPerformanceReviewsCon)
 app.get('/performancereview/:id', getSinglePerformanceReviewsCon)
 app.post('/performancereview', addPerformanceReviewsCon)
-app.patch('/performancereview/:id', editPerformanceReviewsCon)
+app.patch('/performancereview', editPerformanceReviewsCon)
 app.delete('/performancereview/:id', removePerformanceReviewsCon)
 
 app.get('/login', getUsersCon)

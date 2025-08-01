@@ -103,6 +103,7 @@ export default {
         alert("New user has been added.");
         this.$store.dispatch('add_users', this.newUser)
         this.showSignup = false
+        this.$store.dispatch("get_users")
       } catch (error) {
         console.log(error);
       }

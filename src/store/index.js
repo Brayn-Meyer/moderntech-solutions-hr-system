@@ -1,7 +1,6 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
-
-const PORT = import.meta.env.VITE_PORT;
+const API_URL = "http://localhost:3315/"
 
 export default createStore({
     state: {
@@ -65,89 +64,89 @@ export default createStore({
     },
     actions: {
         async fetch_employee_info({ commit }) {
-            let data = await axios.get(`http://localhost:${PORT}/employees`)
+            let data = await axios.get(`${API_URL}employees`)
             commit('get_employee_info', data.data.employees)
             console.log(data.data.employees)
         },
         async fetch_payroll_info({ commit }) {
-            let data = await axios.get(`http://localhost:${PORT}/payrolls`)
+            let data = await axios.get(`${API_URL}payrolls`)
             commit('get_payroll_data', data.data.payrolls)
             console.log(data.data.payrolls)
         },
         async fetch_attendance_info({ commit }) {
-            let data = await axios.get(`http://localhost:${PORT}/attendance`)
+            let data = await axios.get(`${API_URL}attendance`)
             commit('get_attendance', data.data.attendance)
             console.log(data.data.attendance)
         },
         async fetch_leave_request_info({ commit }) {
-            let data = await axios.get(`http://localhost:${PORT}/leaverequest`)
+            let data = await axios.get(`${API_URL}leaverequest`)
             commit('get_leave_request', data.data.leave_request)
             console.log(data.data.leave_request)
         },
         async fetch_performance_reviews_info({ commit }) {
-            let data = await axios.get(`http://localhost:${PORT}/performancereview`)
+            let data = await axios.get(`${API_URL}performancereview`)
             commit('get_performance_reviews', data.data)
             console.log(data.data)
         },
         async fetch_users_info({ commit }) {
-            let data = await axios.get(`http://localhost:${PORT}/login`)
+            let data = await axios.get(`${API_URL}login`)
             commit('get_users', data.data.users)
             console.log(data.data.users)
         },
         async fetch_users_password(payload) {
-            return await axios.get(`http://localhost:${PORT}/login_password`, payload)
+            return await axios.get(`${API_URL}login_password`, payload)
         },
 
         async add_employee({ dispatch }, payload) {
-            await axios.post(`http://localhost:${PORT}/employees`, payload)
+            await axios.post(`${API_URL}employees`, payload)
             dispatch("fetch_employee_info")
         },
         async add_leave_request({ dispatch }, payload) {
-            await axios.post(`http://localhost:${PORT}/leaverequest`, payload)
+            await axios.post(`${API_URL}leaverequest`, payload)
             dispatch("fetch_leave_request_info")
         },
         async add_performance_review({ dispatch }, payload) {
-            await axios.post(`http://localhost:${PORT}/performancereview`, payload)
+            await axios.post(`${API_URL}performancereview`, payload)
             dispatch("fetch_performance_reviews_info")
         },
         async add_users({ dispatch }, payload) {
-            await axios.post(`http://localhost:${PORT}/login`, payload)
+            await axios.post(`${API_URL}login`, payload)
             dispatch("fetch_users_info")
         },
 
         async edit_employee({ dispatch }, payload){
-            await axios.patch(`http://localhost:${PORT}/employees`, payload)
+            await axios.patch(`${API_URL}employees`, payload)
             dispatch("fetch_employee_info")
         },
         async edit_payroll({ dispatch }, payload) {
-            await axios.patch(`http://localhost:${PORT}/payrolls`, payload);
+            await axios.patch(`${API_URL}payrolls`, payload);
             dispatch("fetch_payroll_info");
         },
         async edit_leave_request({ dispatch }, payload) {
-            await axios.patch(`http://localhost:${PORT}/leaverequest`, payload)
+            await axios.patch(`${API_URL}leaverequest`, payload)
             dispatch("fetch_leave_request_info")
         },
         async edit_performance_review({ dispatch }, payload) {
-            await axios.patch(`http://localhost:${PORT}/performancereview`, payload)
+            await axios.patch(`${API_URL}performancereview`, payload)
             dispatch("fetch_performance_reviews_info")
         },
 
         async remove_employee({ dispatch }, id) {
-            await axios.delete(`http://localhost:${PORT}/employees/${id}`)
+            await axios.delete(`${API_URL}employees/${id}`)
             dispatch("fetch_employee_info")
         },
         async remove_leave_request({ dispatch }, id) {
-            await axios.delete(`http://localhost:${PORT}/leaverequest/${id}`)
+            await axios.delete(`${API_URL}leaverequest/${id}`)
             dispatch("fetch_leave_request_info")
         },
         async remove_performance_review({ dispatch }, id) {
-            await axios.delete(`http://localhost:${PORT}/performancereview/${id}`)
+            await axios.delete(`${API_URL}performancereview/${id}`)
             dispatch("fetch_performance_reviews_info")
         },
 
         check_password: async ({ }, payload) => {
             try {
-                const response = await axios.post(`http://localhost:${PORT}/check_password`, payload);
+                const response = await axios.post(`${API_URL}check_password`, payload);
                 console.log('Password check result:', response.data.status);
                 return response.data.status; // true or false
             } catch (error) {

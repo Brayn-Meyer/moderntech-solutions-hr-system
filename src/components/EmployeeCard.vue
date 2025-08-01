@@ -35,7 +35,7 @@
     <div class="edit-modal-overlay" v-if="showEditModal">
         <div class="edit-modal">
             <div class="edit-modal-header">
-                <h2>Edit {{ editForm.name }}</h2>
+                <h2>Edit {{ currentEmployeeName }}</h2>
             </div>
 
             <form @submit.prevent="applyEditEmployee">
@@ -87,6 +87,7 @@ export default {
         const showDeleteModal = ref(false);
         const showEditModal = ref(false);
         const store = useStore();
+        const currentEmployeeName = ref("");
         const editForm = ref({
             name: "",
             position: "",
@@ -104,6 +105,7 @@ export default {
 
         const editEmployee = () => {
             showEditModal.value = true
+            currentEmployeeName.value = props.employee.name
             editForm.value = {
                 name: props.employee.name,
                 position: props.employee.position,
