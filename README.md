@@ -52,7 +52,7 @@ A comprehensive HR platform for **Modern Tech Solutions**, streamlining employee
 ## **How to Run Locally**  
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/Brayn-Meyer/module-2-fullstack.git
+   git clone https://github.com/Brayn-Meyer/moderntech-solutions-hr-system.git
 
 2. Install dependencies in the root folder:
    animate.css, axios, bcrypt, cors, express, jsonwebtoken, mysql2, vue-chartjs, vue-router, vuex
