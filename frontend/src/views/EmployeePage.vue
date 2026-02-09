@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { employeeInformation } from '@/store/employee_info.json';
 import EmployeeCard from '@/components/EmployeeCard.vue';
 import EmployeeModal from '@/components/EmployeeModal.vue';
 import NavbarComp from '@/components/NavbarComp.vue';
@@ -37,7 +36,6 @@ export default {
     data() {
         return {
             add_employee_cliked: true,
-            employees: employeeInformation,
             selectedEmployee: null,
             searchQuery: ''
         }

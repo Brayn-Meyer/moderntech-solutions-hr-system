@@ -123,26 +123,30 @@
             <div class="payslip-details">
                 <h3>Earnings</h3>
                 <table class="payslip-table">
-                    <tr>
-                        <td>Hourly Rate</td>
-                        <td>R{{ currentPayslip.hourlyRate }}</td>
-                    </tr>
-                    <tr>
-                        <td>Hours Worked</td>
-                        <td>{{ currentPayslip.hoursWorked }}</td>
-                    </tr>
-                    <tr>
-                        <td>Gross Pay</td>
-                        <td>R{{ (currentPayslip.hourlyRate * currentPayslip.hoursWorked).toFixed(2) }}</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>Hourly Rate</td>
+                            <td>R{{ currentPayslip.hourlyRate }}</td>
+                        </tr>
+                        <tr>
+                            <td>Hours Worked</td>
+                            <td>{{ currentPayslip.hoursWorked }}</td>
+                        </tr>
+                        <tr>
+                            <td>Gross Pay</td>
+                            <td>R{{ (currentPayslip.hourlyRate * currentPayslip.hoursWorked).toFixed(2) }}</td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <h3>Deductions</h3>
                 <table class="payslip-table">
-                    <tr>
-                        <td>Leave Deductions</td>
-                        <td>R{{ currentPayslip.leaveDeductions }}</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>Leave Deductions</td>
+                            <td>R{{ currentPayslip.leaveDeductions }}</td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <div class="net-pay">
