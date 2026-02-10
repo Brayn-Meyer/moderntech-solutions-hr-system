@@ -49,5 +49,5 @@ app.post('/login', addUsersCon)
 
 // lets app be accessed from line/hosting
 app.listen(PORT, () => {
-    console.log("Link : " + `https://moderntech-solutions-hr-system-ggiq.onrender.com:${PORT}`)
+    console.log("Link : " + `https://your-backend.onrender.com`)
 })
