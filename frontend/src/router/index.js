@@ -13,48 +13,63 @@ const routes = [
   {
     path: '/',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    meta: { title: 'Login' }
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: HomeView
+    component: HomeView,
+    meta: { title: 'Dashboard' }
   },
   {
     path: '/about',
     name: 'about',
-    component: AboutView
+    component: AboutView,
+    meta: { title: 'About' }
   },
   {
     path: '/employee',
     name: 'employee',
-    component: EmployeeView
+    component: EmployeeView,
+    meta: { title: 'Employees' }
   },
   {
     path: '/payroll',
     name: 'payroll',
-    component: PayrollView
+    component: PayrollView,
+    meta: { title: 'Payroll' }
   },
   {
     path: '/attendance',
     name: 'attendance',
-    component: AttendanceView
+    component: AttendanceView,
+    meta: { title: 'Attendance' }
   },
   {
     path: '/leaverequest',
     name: 'leaverequest',
-    component: LeaveRequestView
+    component: LeaveRequestView,
+    meta: { title: 'Leave Requests' }
   },
   {
     path: '/performancereview',
     name: 'performanceView',
-    component: PerformanceReview
+    component: PerformanceReview,
+    meta: { title: 'Performance Review' }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+const appName = 'Modern Tech Solutions'
+
+router.afterEach((to) => {
+  const pageTitle = to.meta?.title
+  document.title = pageTitle ? `${pageTitle} | ${appName}` : appName
 })
 
 export default router
